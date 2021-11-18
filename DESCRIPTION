@@ -12,4 +12,5 @@ Description: The purpose of the `SmaxN` package is to compute an extension
   of the maxN index (maximum of abundance seen during a given period of time)
   by using temporally synchronised cameras. It can use the distance between
   cameras and the swimming speed of the studied species to improve the estimate.
+License: GPL-2
 RoxygenNote: 7.1.1
