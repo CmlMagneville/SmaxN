@@ -6,7 +6,5 @@ Authors@R:
            role    = c("aut", "cre"),
            email   = "camille.magneville@gmail.com",
            comment = c(ORCID = "0000-0003-0489-3822"))
-Description: The purpose of the \code{SmaxN} package is to compute an extension 
-of the maxN index (maximum of abundance seen during a given period of time)  
-by using temporally synchronised cameras. It can use the distance between 
-cameras and the swimming speed of the studied species to improve the estimate.
+Description: The purpose of the \code{SmaxN} package is to compute an extension of the maxN index (maximum of abundance seen during a given period of time)  
+by using temporally synchronised cameras. It can use the distance between cameras and the swimming speed of the studied species to improve the estimate.
