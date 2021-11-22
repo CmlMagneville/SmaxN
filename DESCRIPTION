@@ -1,6 +1,6 @@
 Package: SmaxN
 Title: Compute synchronised maxN when using temporally synchronised cameras
-Version: 0.1
+Version: 0.2
 Encoding: UTF-8
 Authors@R:
     person(given   = "Camille",
