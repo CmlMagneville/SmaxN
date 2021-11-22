@@ -24,7 +24,7 @@
 #' @return the function returns a list of the Synchronised MaxN (SmaxN) values
 #' for all the cameras and a given second (timestep).
 #'  
-#'  @examples
+#' @examples
 #'  # Build distance dataframe for the example:
 #'  abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3), 
 #'                            "B" = c(2, 2, 2, 2, 0, 0, 0), 

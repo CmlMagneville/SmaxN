@@ -20,7 +20,7 @@
 #'  as many columns as there are cameras, thus the dataframe is symmetrical
 #'  and the diagonal is filled with 0.
 #'  
-#'  @examples
+#' @examples
 #'  # Build distance dataframe for the example:
 #'  dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
 #'  "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
