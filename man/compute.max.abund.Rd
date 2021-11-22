@@ -38,9 +38,25 @@ taking the maximal value of cameras abundances on each row, thus the list
 contains as many elements as there are rows in the \code{abund_df} dataframe) 
 and \strong{the SmaxN_row value} (the maximal value of the abundances summed
 across cameras on each row). If fish speed is not taken into account then, 
-the returned list does not contain the SmaxN value.
+the returned list does not contain the SmaxN value because the SmaxN 
+value is the equal to the SmaxN_row value.
  
  @examples
+ # Build distance dataframe for the example:
+ dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
+ "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
+ rownames(dist_df_ex) <- c("A", "B", "C", "D")
+ 
+ # Build distance dataframe for the example:
+ abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3, 0, 6, 2, 0, 1), 
+                           "B" = c(2, 2, 2, 2, 0, 0, 0, 0, 1, 2, 1, 0), 
+                           "C" = c(2, 0, 1, 0, 0, 4, 2, 2, 3, 0, 0, 4), 
+                           "D" = c(0, 1, 0, 1, 0, 6, 1, 1, 6, 4, 2, 1))
+ 
+ # Run the function:
+ compute.max.abund(dist_df = dist_df_ex, 
+                fish_speed = 1.6, 
+                abund_df   = abund_df_ex)
 }
 \description{
 This function computes the Synchronised MaxN (SmaxN) for a given second and

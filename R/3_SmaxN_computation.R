@@ -34,16 +34,98 @@
 #' contains as many elements as there are rows in the \code{abund_df} dataframe) 
 #' and \strong{the SmaxN_row value} (the maximal value of the abundances summed
 #' across cameras on each row). If fish speed is not taken into account then, 
-#' the returned list does not contain the SmaxN value.
+#' the returned list does not contain the SmaxN value because the SmaxN 
+#' value is the equal to the SmaxN_row value.
 #'  
 #'  @examples
+#'  # Build distance dataframe for the example:
+#'  dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
+#'  "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
+#'  rownames(dist_df_ex) <- c("A", "B", "C", "D")
 #'  
+#'  # Build distance dataframe for the example:
+#'  abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3, 0, 6, 2, 0, 1), 
+#'                            "B" = c(2, 2, 2, 2, 0, 0, 0, 0, 1, 2, 1, 0), 
+#'                            "C" = c(2, 0, 1, 0, 0, 4, 2, 2, 3, 0, 0, 4), 
+#'                            "D" = c(0, 1, 0, 1, 0, 6, 1, 1, 6, 4, 2, 1))
 #'  
+#'  # Run the function:
+#'  compute.max.abund(dist_df = dist_df_ex, 
+#'                 fish_speed = 1.6, 
+#'                 abund_df   = abund_df_ex)
 #' 
 
 
 compute.max.abund <- function(dist_df, fish_speed, abund_df) {
   
   
+  # if fish_speed is taken into account:
+  if (! is.null(fish_speed)) {
+    
+    
+    # get the time_df using the 1st function:
+    time_df <- compute.cam.time(dist_df = dist_df, fish_speed = fish_speed)
+    
+    
+    # define the start timestep (not the first row because of distance ...
+    # ... between the cameras):
+    timestep_start <- max(time_df) + 1
+    
+    # define the stop timestep (not the last row because of distance ...
+    # ... between the cameras):
+    timestep_stop <- nrow(abund_df) - max(time_df)
+    
+    
+    # compute for each timestep the SmaxN_timestep using the 2nd function ...
+    # ... and create a vector that will contain the SmaxN_timestep values:
+    
+    vect_zall <- c()
+    
+    for(i in c(timestep_start:timestep_stop)) {
+      
+      # compute for each camera the SmaxN_timestep using the 2nd function ...
+      # ... and create a vector that will contain SmaxN_timestep values for ...
+      # ... each camera:
+      vect_zcam <- c()
+      
+      for (j in c(1:ncol(abund_df))) {
+        
+        zcam <- compute.SmaxN.timestep(time_df, abund_df, j, i)
+        vect_zcam <- append(vect_zcam, zcam)
+        
+      } # end loop on cameras
+      
+      # compute the maximal value of the vect_zcam vector that is the SmaxN...
+      # ... for a given timestep and store it in a new vector:
+      vect_zall <- append(vect_zall, max(vect_zcam))
+      
+    } # end loop timesteps
+    
+  } # end loop if (!(is.null(fish_speed)))
+  
+
+  # compute the sum of abundances across cameras on each row:
+  # ... this time use all rows:
+  vect_maxN_sum <- apply(abund_df, 1, sum)
+  # compute the SmaxN_row which is the maximal value of vect_maxN_sum:
+  SmaxN_row <- max(vect_maxN_sum) 
+  
+  
+  # Prepare the return list:
+  
+  if (!(is.null(fish_speed))) {
+    return(list(SmaxN = max(vect_zall),
+                maxN  = max(abund_df),
+                maxN_cam = apply(abund_df, 2, max),
+                maxN_row = apply(abund_df, 1, max),
+                SmaxN_row = SmaxN_row))
+  }
+  
+  if (is.null(fish_speed)) {
+    return(list(maxN  = max(abund_df),
+                maxN_cam = apply(abund_df, 2, max),
+                maxN_row = apply(abund_df, 1, max),
+                SmaxN_row = SmaxN_row))
+  }
 
 }
