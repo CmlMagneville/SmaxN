@@ -22,7 +22,7 @@
 #' @param timestep the number of the row to the studied timestep
 #' 
 #' @return the function returns a list of the Synchronised MaxN (SmaxN) values
-#' for all the cameras and a given second.
+#' for all the cameras and a given second (timestep).
 #'  
 #'  @examples
 #'  # Build distance dataframe for the example:
@@ -39,7 +39,7 @@
 compute.SmaxN.timestep <- function(time_df, abund_df, cam_nm, timestep) {
   
   
-  list_max <- list()
+  vect_max <- c()
   
   # check that abund_df and time_df have columns ordered likely:
   
@@ -58,7 +58,7 @@ compute.SmaxN.timestep <- function(time_df, abund_df, cam_nm, timestep) {
       stop_frame <- timestep + min(time_df[cam_nm, 
                                            which(time_df[cam_nm, ] != 0)])
       max <- max(abund_df[c(start_frame:stop_frame), i])
-      list_max <- rlist::list.append(list_max, max)
+      vect_max <- append(vect_max, max)
     }
     
     # else:
@@ -68,7 +68,7 @@ compute.SmaxN.timestep <- function(time_df, abund_df, cam_nm, timestep) {
       start_frame <- timestep - time_df[cam_nm, colnames(abund_df)[i]]
       stop_frame <- timestep + time_df[cam_nm, colnames(abund_df)[i]]
       max <- max(abund_df[c(start_frame:stop_frame), i])
-      list_max <- rlist::list.append(list_max, max)
+      vect_max <- append(vect_max, max)
     }
     
   }
@@ -76,7 +76,7 @@ compute.SmaxN.timestep <- function(time_df, abund_df, cam_nm, timestep) {
   
   # compute the sum of the max retrieved for each camera:
   sum_max_cam <- 0
-  for (j in list_max) {
+  for (j in vect_max) {
     sum_max_cam <- sum_max_cam + j
   }
     

@@ -26,7 +26,7 @@ in the same order in the abund_df and the time_df!}.}
 }
 \value{
 the function returns a list of the Synchronised MaxN (SmaxN) values
-for all the cameras and a given second.
+for all the cameras and a given second (timestep).
  
  @examples
  # Build distance dataframe for the example:
