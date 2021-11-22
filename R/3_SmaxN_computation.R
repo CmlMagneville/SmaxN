@@ -61,6 +61,21 @@
 compute.max.abund <- function(dist_df, fish_speed, abund_df) {
   
   
+  # check that colnames of abund_df are the same as colnames and rownames ...
+  # ... of dist_df:
+  if (any(colnames(dist_df) != colnames(abund_df))) {
+    stop("Cameras names are not the same  or not in the same order in the
+         dist_df and the abund_df, please check.")
+  }
+  
+  # check that colnames of abund_df are the same as colnames and rownames ...
+  # ... of dist_df:
+  if (any(colnames(dist_df) != rownames(dist_df))) {
+    stop("Cameras names are not the same or not in the same order in the rows 
+    names and the columns names of the dist_df, please check.")
+  }
+  
+  
   # if fish_speed is taken into account:
   if (! is.null(fish_speed)) {
     
