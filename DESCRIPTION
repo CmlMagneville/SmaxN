@@ -14,3 +14,5 @@ Description: The purpose of the `SmaxN` package is to compute an extension
   cameras and the swimming speed of the studied species to improve the estimate.
 License: GPL-2
 RoxygenNote: 7.1.1
+Imports: 
+    rlist

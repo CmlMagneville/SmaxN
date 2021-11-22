@@ -39,14 +39,47 @@
 compute.SmaxN.timestep <- function(time_df, abund_df, cam_nm, timestep) {
   
   
+  list_max <- list()
+  
+  # check that abund_df and time_df have columns ordered likely:
+  
+  
   # Do a loop to browse all the cameras (ie all the columns of abund_df):
   for(i in (1:ncol(abund_df))) {
     
-    # extract max of each column in the progression frame:
-    max(abund_df[c(timestep), i])
+    
+    # if the i th camera is the one studied colnames(abund_df)[i] == cam_nm ...
+    # ... then the frame on this column is equal to the minimal time for the ...
+    # ... cam_nm row:
+    if (colnames(abund_df)[i] == cam_nm) {
+      
+      start_frame <- timestep - min(time_df[cam_nm, 
+                                            which(time_df[cam_nm, ] != 0)])
+      stop_frame <- timestep + min(time_df[cam_nm, 
+                                           which(time_df[cam_nm, ] != 0)])
+      max <- max(abund_df[c(start_frame:stop_frame), i])
+      list_max <- rlist::list.append(list_max, max)
+    }
+    
+    # else:
+    if (colnames(abund_df)[i] != cam_nm) {
+      
+      # extract max of each column in the progression frame:
+      start_frame <- timestep - time_df[cam_nm, colnames(abund_df)[i]]
+      stop_frame <- timestep + time_df[cam_nm, colnames(abund_df)[i]]
+      max <- max(abund_df[c(start_frame:stop_frame), i])
+      list_max <- rlist::list.append(list_max, max)
+    }
     
   }
   
   
+  # compute the sum of the max retrieved for each camera:
+  sum_max_cam <- 0
+  for (j in list_max) {
+    sum_max_cam <- sum_max_cam + j
+  }
+    
+  return(sum_max_cam)
   
 }
