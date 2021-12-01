@@ -6,10 +6,7 @@
 \alias{SmaxN-package}
 \title{SmaxN: Compute synchronised maxN when using temporally synchronised cameras}
 \description{
-The purpose of the `SmaxN` package is to compute an extension
-  of the maxN index (maximum of abundance seen during a given period of time)
-  by using temporally synchronised cameras. It can use the distance between
-  cameras and the swimming speed of the studied species to improve the estimate.
+The purpose of the `SmaxN` package is to compute an extension of the maxN index (maximum of abundance seen during a given period of time) by using temporally synchronised cameras. It can use the distance between cameras and the swimming speed of the studied species to improve the estimate.
 }
 \author{
 \strong{Maintainer}: Camille Magneville \email{camille.magneville@gmail.com} (\href{https://orcid.org/0000-0003-0489-3822}{ORCID})

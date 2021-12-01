@@ -40,8 +40,13 @@ and \strong{the SmaxN_row value} (the maximal value of the abundances summed
 across cameras on each row). If fish speed is not taken into account then, 
 the returned list does not contain the SmaxN value because the SmaxN 
 value is the equal to the SmaxN_row value.
- 
- @examples
+}
+\description{
+This function computes the Synchronised MaxN (SmaxN) for a given second and
+a given camera. It used the time dataframe gathering the time it takes for 
+an individual of a given species to go from one camera to another.
+}
+\examples{
  # Build distance dataframe for the example:
  dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
  "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
@@ -57,9 +62,5 @@ value is the equal to the SmaxN_row value.
  compute.max.abund(dist_df = dist_df_ex, 
                 fish_speed = 1.6, 
                 abund_df   = abund_df_ex)
-}
-\description{
-This function computes the Synchronised MaxN (SmaxN) for a given second and
-a given camera. It used the time dataframe gathering the time it takes for 
-an individual of a given species to go from one camera to another.
+                
 }

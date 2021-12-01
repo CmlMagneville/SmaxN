@@ -27,8 +27,13 @@ in the same order in the abund_df and the time_df!}.}
 \value{
 the function returns a list of the Synchronised MaxN (SmaxN) values
 for all the cameras and a given second (timestep).
- 
- @examples
+}
+\description{
+This function computes the Synchronised MaxN (SmaxN) for a given second and
+a given camera. It used the time dataframe gathering the time it takes for 
+an individual of a given species to go from one camera to another.
+}
+\examples{
  # Build distance dataframe for the example:
  abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3), 
                            "B" = c(2, 2, 2, 2, 0, 0, 0), 
@@ -36,9 +41,6 @@ for all the cameras and a given second (timestep).
                            "D" = c(0, 1, 0, 1, 0, 6, 1))
  
  # Run the function:
-}
-\description{
-This function computes the Synchronised MaxN (SmaxN) for a given second and
-a given camera. It used the time dataframe gathering the time it takes for 
-an individual of a given species to go from one camera to another.
+ 
+
 }

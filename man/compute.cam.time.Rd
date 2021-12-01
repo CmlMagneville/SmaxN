@@ -22,8 +22,14 @@ the function returns a dataframe containing the minimal time
  another camera.There are as many rows as there are cameras and there are
  as many columns as there are cameras, thus the dataframe is symmetrical
  and the diagonal is filled with 0.
- 
- @examples
+}
+\description{
+This function computes a dataframe containing the minimal time 
+needed for an individual of the studied species to go from a camera to 
+another camera. It is based on the distance between each pair of cameras 
+and the swim speed of the species.
+}
+\examples{
  # Build distance dataframe for the example:
  dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
  "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
@@ -31,10 +37,6 @@ the function returns a dataframe containing the minimal time
  
  # Run the function:
  compute.cam.time(dist_df = dist_df_ex, fish_speed = 1.6)
-}
-\description{
-This function computes a dataframe containing the minimal time 
-needed for an individual of the studied species to go from a camera to 
-another camera. It is based on the distance between each pair of cameras 
-and the swim speed of the species.
+ 
+
 }
