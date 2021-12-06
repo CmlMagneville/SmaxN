@@ -8,10 +8,11 @@ compute.max.abund(dist_df, fish_speed, abund_df)
 }
 \arguments{
 \item{dist_df}{a numerical dataframe containing the distance between each 
-pair of camera. There are as many rows as there are cameras and there are
-as many columns as there are cameras, thus the dataframe is symmetrical
-and the diagonal is filled with 0. \strong{Rows names and columns names
-must be cameras names}.}
+ pair of camera. There are as many rows as there are cameras and there are
+ as many columns as there are cameras, thus the dataframe is symmetrical
+ and the diagonal is filled with 0. \strong{Rows names and columns names
+ must be cameras names}. \strong{BE CAREFUL that the cameras are 
+the same and in the same order in the dist_df and in the abund_df!}}
 
 \item{fish_speed}{a numerical value refering to the maximal speed of the 
 studied species. \strong{Speed must be given in meters per second}. If the

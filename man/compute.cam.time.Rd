@@ -38,5 +38,4 @@ and the swim speed of the species.
  # Run the function:
  compute.cam.time(dist_df = dist_df_ex, fish_speed = 1.6)
  
-
 }
