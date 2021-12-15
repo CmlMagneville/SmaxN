@@ -27,8 +27,8 @@ in seconds and be continuous}. \strong{BE CAREFUL that the cameras are
 in the same order in the abund_df and the time_df!}.}
 }
 \value{
-if the fish speed is taken into account, the function returns in a 
-list: 
+if more than one camera: if the fish speed is taken into account, 
+the function returns in a list: 
 \strong{the Synchronised maxN (SmaxN) value} (the maximal value computed by 
 gathering temporally synchronised cameras) , \strong{the maxN value} 
 (the maximal value computed as the maximal abundance across all cameras and 
@@ -41,6 +41,8 @@ and \strong{the SmaxN_row value} (the maximal value of the abundances summed
 across cameras on each row). If fish speed is not taken into account then, 
 the returned list does not contain the SmaxN value because the SmaxN 
 value is the equal to the SmaxN_row value.
+if only one camera: the function returns only \strong{the maxN value} 
+(the maximal value computed as the maximal abundance across all timesteps)
 }
 \description{
 This function computes the Synchronised MaxN (SmaxN) for a given second and
