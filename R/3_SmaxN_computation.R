@@ -153,7 +153,7 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
   }
   
   # if there only one camera, return only maxN:
-  if (ncol(dist_df == 1)) {
+  if (ncol(dist_df) == 1) {
     return(list(maxN  = max(abund_df)))
   }
 
