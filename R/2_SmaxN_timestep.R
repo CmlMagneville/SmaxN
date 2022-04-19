@@ -22,8 +22,7 @@
 #' computed. Note: if the span is of 2 seconds, then the interval gathers 
 #' 3 cases of the `abund_df`.
 #' 
-#' @return the function returns a list of the Synchronised MaxN (SmaxN) values
-#' for all the cameras and a given second (timestep).
+#' @return the function returns the SmaxN value for the given timestep and span
 #'  
 #' @examples
 #'  # Build distance dataframe for the example:
