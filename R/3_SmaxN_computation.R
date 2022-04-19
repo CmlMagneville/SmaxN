@@ -152,7 +152,7 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       # use the new function to compute SmaxN in a big interval 
       
       
-      
+      ################ COMPLETE BLUE HERE ########################
       
       
       
