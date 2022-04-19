@@ -89,69 +89,79 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       time_df <- compute.cam.time(dist_df = dist_df, fish_speed = fish_speed)
       
       
-      # define the start timestep (not the first row because of distance ...
-      # ... between the cameras):
-      timestep_start <- max(time_df) + 1
+      # get the length of the small interval build the lowest time between ...
+      # ... camera pairs:
+      small_UI <- min(apply(abund_df[, ], 1, function(x) min(x[x > 0])))
+      # idem with max:
+      big_UI <- max(abund_df)
       
-      # define the stop timestep (not the last row because of distance ...
-      # ... between the cameras):
-      timestep_stop <- nrow(abund_df) - max(time_df)
+      ## create two df for the SmaxN values for each timestep for the ...
+      ## ... small_UI and big_UI:
+      small_SmaxN_df <- as.data.frame(matrix(ncol = 2, nrow = 1))
+      colnames(small_SmaxN_df) <- c("row", "SmaxN")
+      big_SmaxN_df <- as.data.frame(matrix(ncol = 2, nrow = 1))
+      colnames(big_SmaxN_df) <- c("row", "SmaxN")
       
       
-      # compute for each timestep the SmaxN_timestep using the 2nd function ...
-      # ... and create a vector that will contain the SmaxN_timestep values:
+      ## for each timestep, compute the SmaxN on small_UI and keep in memory ...
+      ## ... the SmaxN for each timestep:
+      ## idem for big_UI:
       
-      vect_zall <- c()
-      
-      for(i in c(timestep_start:timestep_stop)) {
+      for (i in (1:nrow(abund_df))) {
         
-        # compute for each camera the SmaxN_timestep using the 2nd function ...
-        # ... and create a vector that will contain SmaxN_timestep values for ...
-        # ... each camera:
-        vect_zcam <- c()
+        # compute the SmaxN for the timestep and the small span:
+        small <- compute.SmaxN.timestep(time_df = time_df,
+                                        abund_df = abund_df,
+                                        timestep = i,
+                                        value = small_UI)
+
+        # compute the SmaxN for the timestep and the big span:
+        big <- compute.SmaxN.timestep(time_df = time_df,
+                                        abund_df = abund_df,
+                                        timestep = i,
+                                        value = big_UI)
         
-        for (j in c(1:ncol(abund_df))) {
-          
-          zcam <- compute.SmaxN.timestep(time_df, abund_df, j, i)
-          vect_zcam <- append(vect_zcam, zcam)
-          
-        } # end loop on cameras
+        # add values in the small and big df:
+        small_SmaxN_df <- dplyr::add_row(row = rownames(abund_df)[i], SmaxN = small, small_SmaxN_df)
+        big_SmaxN_df <- dplyr::add_row(row = rownames(abund_df)[i], SmaxN = big, big_SmaxN_df)
         
-        # compute the maximal value of the vect_zcam vector that is the SmaxN...
-        # ... for a given timestep and store it in a new vector:
-        vect_zall <- append(vect_zall, max(vect_zcam))
+        # remove first rows filled with Na and use numerical format:
+        small_SmaxN_df <- small_SmaxN_df[-1, ]
+        big_SmaxN_df <- big_SmaxN_df[-1, ]
         
-      } # end loop timesteps
+        small_SmaxN_df$SmaxN <- as.numeric(small_SmaxN_df$SmaxN)
+        big_SmaxN_df$SmaxN <- as.numeric(big_SmaxN_df$SmaxN)
+        
+      } # end computation of Smaxn for each timestep and small and big spans
       
-    } # end loop if (!(is.null(fish_speed)))
+      
+      # Compute the max of SmaxN of small spans for all timesteps:
+      max_small <- max(small_SmaxN_df$SmaxN)
+      
+      
+      
+      ## Remove timesteps not to study ie the one with big_UI SmaxN < max_small:
+      clean_big_SmaxN_df <- big_SmaxN_df[which(! big_SmaxN_df$SmaxN < max_small), ]
+      # now this df contains the timesteps to study, in which the general SmaxN is
+      
+      # order the rows by decreasing order so that study intervals with the ...
+      # ... biggest SmaxN first:
+      order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
+      
+      
+      # use the new function to compute SmaxN in a big interval 
+      
+      
+      
+      
+      
+      
+      
+    } # end if fish speed taken into account
     
-    
-    # compute the sum of abundances across cameras on each row:
-    # ... this time use all rows:
-    vect_maxN_sum <- apply(abund_df, 1, sum)
-    # compute the SmaxN_row which is the maximal value of vect_maxN_sum:
-    SmaxN_row <- max(vect_maxN_sum) 
-    
-    
-    # Prepare the return list:
-    
-    if (!(is.null(fish_speed))) {
-      return(list(SmaxN = max(vect_zall),
-                  maxN  = max(abund_df),
-                  maxN_cam = apply(abund_df, 2, max),
-                  maxN_row = apply(abund_df, 1, max),
-                  SmaxN_row = SmaxN_row))
-    }
-    
-    if (is.null(fish_speed)) {
-      return(list(maxN  = max(abund_df),
-                  maxN_cam = apply(abund_df, 2, max),
-                  maxN_row = apply(abund_df, 1, max),
-                  SmaxN_row = SmaxN_row))
-    }
+  } # end if more than one camera
   
-  }
-  
+    
   # if there only one camera, return only maxN:
   if (ncol(dist_df) == 1) {
     return(list(maxN  = max(abund_df)))
