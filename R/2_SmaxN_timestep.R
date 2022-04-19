@@ -1,8 +1,7 @@
-#' Compute the Synchronised MaxN for a given second and a given camera
+#' Compute the Synchronised MaxN for a given second and a given span
 #'
-#' This function computes the Synchronised MaxN (SmaxN) for a given second and
-#' a given camera. It used the time dataframe gathering the time it takes for 
-#' an individual of a given species to go from one camera to another. 
+#' This function computes the Synchronised MaxN (SmaxN) for a given second and 
+#' the "n" seconds after. "n" being set up by the "value" parameter .
 #' 
 #' @param time_df a numerical dataframe containing the minimal time 
 #'  needed for an individual of the studied species to go from a camera to 
@@ -17,9 +16,11 @@
 #' in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
 #' in the same order in the abund_df and the time_df!}.
 #' 
-#' @param cam_nm the name of the camera for which the SmaxN must be computed
-#' 
 #' @param timestep the number of the row to the studied timestep
+#' 
+#' @param value the value of the span of the interval on which the SmaxN is 
+#' computed. Note: if the span is of 2 seconds, then the interval gathers 
+#' 3 cases of the `abund_df`.
 #' 
 #' @return the function returns a list of the Synchronised MaxN (SmaxN) values
 #' for all the cameras and a given second (timestep).
@@ -36,50 +37,73 @@
 #' 
 
 
-compute.SmaxN.timestep <- function(time_df, abund_df, cam_nm, timestep) {
+compute.SmaxN.timestep <- function(time_df, abund_df, timestep, value) {
   
   
-  vect_max <- c()
   
-  # check that abund_df and time_df have columns ordered likely:
+  # add rownames as a column so easier to manipulate:
+  abund_df2 <- tibble::rownames_to_column(abund_df, "rownames")
+  rownames(abund_df2) <- c(1:nrow(abund_df2))
   
-  
-  # Do a loop to browse all the cameras (ie all the columns of abund_df):
-  for(i in (1:ncol(abund_df))) {
+  # if there is enough rows to build the "bloc" on which SmaxN should be ...
+  # ... computed according to the "value" parameter:
+  # ... note: number of cases = number of seconds + 1
+  if ((nrow(abund_df2) - as.numeric(rownames(abund_df2[which(abund_df2$rownames == timestep), ])) + 1)
+       >= value + 1) {
+    
+    # get the number of the row where the timestep is:
+    row_nb <- as.numeric(rownames(abund_df2[which(abund_df2$rownames == timestep), ]))
+    
+    # create a vector that will contain one abundance value per camera to ...
+    # ... sum them once the process is finished:
+    max_cam_vect <- c()
     
     
-    # if the i th camera is the one studied colnames(abund_df)[i] == cam_nm ...
-    # ... then the frame on this column is equal to the minimal time for the ...
-    # ... cam_nm row:
-    if (colnames(abund_df)[i] == cam_nm) {
+    # span over the different cameras:
+    for (j in (2:ncol(abund_df2))) {
       
-      start_frame <- timestep - min(time_df[cam_nm, 
-                                            which(time_df[cam_nm, ] != 0)])
-      stop_frame <- timestep + min(time_df[cam_nm, 
-                                           which(time_df[cam_nm, ] != 0)])
-      max <- max(abund_df[c(start_frame:stop_frame), i])
-      vect_max <- append(vect_max, max)
-    }
-    
-    # else:
-    if (colnames(abund_df)[i] != cam_nm) {
+      # get all the abundance values in the studied interval for the given cam:
+      UI_abund_cam <- abund_df2[c(row_nb:(row_nb + value)), j]
       
-      # extract max of each column in the progression frame:
-      start_frame <- timestep - time_df[cam_nm, colnames(abund_df)[i]]
-      stop_frame <- timestep + time_df[cam_nm, colnames(abund_df)[i]]
-      max <- max(abund_df[c(start_frame:stop_frame), i])
-      vect_max <- append(vect_max, max)
-    }
+      # append the max value of this abundance data for the given cam and interval:
+      max_cam_vect <- append(max(UI_abund_cam), max_cam_vect)
+      
+    } # end loop on cameras
+    
+    SmaxN <- sum(max_cam_vect)
     
   }
   
   
-  # compute the sum of the max retrieved for each camera:
-  sum_max_cam <- 0
-  for (j in vect_max) {
-    sum_max_cam <- sum_max_cam + j
+  # if there is not enough rows to build the "bloc" on which SmaxN should be ...
+  # ... computed according to the "value" parameter:
+  # ... note: number of cases = number of seconds + 1
+  if ((nrow(abund_df2) - as.numeric(rownames(abund_df2[which(abund_df2$rownames == timestep), ])) + 1)
+      < value + 1) {
+    
+    # get the number of the row where the timestep is:
+    row_nb <- as.numeric(rownames(abund_df2[which(abund_df2$rownames == timestep), ]))
+    
+    # create a vector that will contain one abundance value per camera to ...
+    # ... sum them once the process is finished:
+    max_cam_vect <- c()
+    
+    
+    # span over the different cameras:
+    for (j in (2:ncol(abund_df2))) {
+      
+      # get all the abundance values in the studied interval for the given cam:
+      UI_abund_cam <- abund_df2[c(row_nb:nrow(abund_df2)), j]
+      
+      # append the max value of this abundance data for the given cam and interval:
+      max_cam_vect <- append(max(UI_abund_cam), max_cam_vect)
+      
+    } # end loop on cameras
+    
+    SmaxN <- sum(max_cam_vect)
+    
   }
     
-  return(sum_max_cam)
+  return(SmaxN)
   
 }
