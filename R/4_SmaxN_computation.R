@@ -1,3 +1,4 @@
+
 #' Compute the Synchronised MaxN for a given second and a given camera
 #'
 #' This function computes the Synchronised MaxN (SmaxN) for a given second and
@@ -149,15 +150,77 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
       
       
-      # use the new function to compute SmaxN in a big interval 
+      ## for each timestep to study - TO TEST FROM HERE ONCE BIG FCT MADE:
+      
+      # create a list that will contain the SmaxN of each big UI:
+      SmaxN_vect <- c()
+      
+      for (b in (1:nrow(order_big_SmaxN_df))) {
+        
+        # compute the SmaxN of the big interval of the given timestep:
+        v <- compute.SmaxN.bigUI(abund_df = abund_df,
+                                 value = big_UI,
+                                 timestep = b, 
+                                 time_df = time_df)
+        
+        # add the SmaxN of the given timestep to the SmaxN vect:
+        SmaxN_vect <- append(SmaxN_vect, v)
+        
+        # Remove timesteps not to study ie the one with big_UI SmaxN < the SmaxN we just computed:
+        clean_big_SmaxN_df <- order_big_SmaxN_df[which(! order_big_SmaxN_df$SmaxN < v), ]
+
+        # order the rows by decreasing order so that study intervals with the ...
+        # ... biggest SmaxN first:
+        order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
+        
+        
+
+      } # end for each timestep to study
       
       
-      ################ COMPLETE BLUE HERE ########################
+      # Compute the general SmaxN:
+      SmaxN <- max(SmaxN_vect)
+      
+      # Compute other metrics:
+      maxN <- max(abund_df)
+      maxN_cam <- apply(abund_df, 2, max)
+      maxN_timestep <- apply(abund_df, 1, max)
+      
+      vect_maxN_sum <- apply(abund_df, 1, sum)
+      SmaxN_timestep <- max(vect_maxN_sum) 
       
       
+      # return:
+      return_list <- list(maxN = maxN, 
+                          SmaxN = SmaxN,
+                          SmaxN_timestep = SmaxN_timestep,
+                          maxN_cam = maxN_cam,
+                          maxN_timestep = maxN_timestep)
+    
       
       
     } # end if fish speed taken into account
+    
+    if (is.null(fish_speed)) {
+      
+      # Compute other metrics:
+      maxN <- max(abund_df)
+      maxN_cam <- apply(abund_df, 2, max)
+      maxN_timestep <- apply(abund_df, 1, max)
+      
+      vect_maxN_sum <- apply(abund_df, 1, sum)
+      SmaxN_timestep <- max(vect_maxN_sum) 
+      
+      
+      # return:
+      return_list <- list(maxN = maxN, 
+                          SmaxN_timestep = SmaxN_timestep,
+                          maxN_cam = maxN_cam,
+                          maxN_timestep = maxN_timestep)
+      
+      
+    } # end if fish speed is not taken into account
+    
     
   } # end if more than one camera
   
