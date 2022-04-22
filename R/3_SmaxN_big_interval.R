@@ -101,9 +101,9 @@ search.next.value <- function(max_bloc, bloc) {
 #' lowest (last rows). Column names: value, cam_nm, timestep
 #' 
 #' @param next_possible  a dataframe with column names: value, cam_nm, timestep 
-#' with a row for the information about the next possible value. If several cases 
-#' have the same value (ex-aequo), the dataframe has one row for each case. This
-#' dataframe is obtained through the \code{search.next.value function.
+#' with a row for the information about the next possible value. If several cells 
+#' have the same value (ex-aequo), the dataframe has one row for each cell. This
+#' dataframe is obtained through the \code{search.next.value} function.
 #' 
 #' @param time_df a numerical dataframe containing the minimal time 
 #'  needed for an individual of the studied species to go from a camera to 
@@ -157,7 +157,8 @@ next.possible <- function(max_bloc, next_possible, time_df) {
       }
       
       # compute the real timespan between the value on the path and the next possible:
-      delta_real <- abs(max_bloc$timestep[i] - as.numeric(next_possible2$timestep[j]) + 1)
+      ### PEUT POSER PROBLEME ICI EN FONCTION DE LA CLASSE DES TIME STEPS (CONVERTIR SI EN HMS)
+      delta_real <- abs(as.numeric(max_bloc$timestep[i]) - as.numeric(next_possible2$timestep[j]) + 1)
 
       # check the deltas:
       if (delta_real > delta_ok) {
@@ -193,3 +194,305 @@ next.possible <- function(max_bloc, next_possible, time_df) {
   return(next_possible2)
   
 }
+
+
+
+
+
+#' Compute the order in which cameras must be looked at in a bloc (smallest
+#' to highest distances)
+#'
+#' This function computes a dataframe which contains one or several rows which...
+#' camera names in the order they must be looked at. If several camera ...
+#' pairs have the same distance, then their will be several rows... 
+#' If all camera pairs have different distances, then there will be one row ... 
+#' with only one camera order to test
+#' 
+#' @param time_df a numerical dataframe containing the minimal time 
+#'  needed for an individual of the studied species to go from a camera to 
+#'  another camera.There are as many rows as there are cameras and there are
+#'  as many columns as there are cameras, thus the dataframe is symmetrical
+#'  and the diagonal is filled with 0. This dataframe is the output of the 
+#'  \code{compute.cam.time} function.
+#' 
+#' @return 
+#'
+#' @example 
+#' 
+#'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
+#'  "B" = c(0,4,2,2,1,3,3), 
+#'  "C" = c(0,0,0,0,1,1,1), 
+#'  "D" = c(1,0,0,0,3,3,3))
+#'  
+#'  time_df <- data.frame("A" = c(0,5,6,6), "B" = c(5,0,3,3), 
+#'  "C" = c(6,3, 0, 3), "D" = c(6,3,3,0))
+#'  rownames(time_df) <- c("A", "B", "C", "D")
+#'  
+
+
+
+compute.cam.order <- function(time_df) {
+  
+  # create a df that contain the name of cameras already used in the order list:
+  cam_df <- as.data.frame(matrix(ncol = ncol(time_df), nrow = 1))
+  colnames(cam_df) <- c(1:ncol(time_df))
+  
+  time_df2 <- time_df
+  
+  # counter to count the number of cameras:
+  n <- 1
+  
+  # while each camera has not been studied:
+  
+  while(n <= ncol(time_df)) {
+    
+    # create a df with only the cameras which have not been selected already:
+    time_df2 <- time_df[! rownames(time_df) %in% unlist(cam_df), ! colnames(time_df) %in% unlist(cam_df)]
+    
+    # if the last camera to put in the df
+    if (is.numeric(time_df2)) {
+      
+      # get the camera name:
+      cam_done <- unique(unlist(cam_df))
+      time_df3 <- time_df
+      time_df3 <- tibble::rownames_to_column(time_df3, "cam")
+      cam_toadd <- time_df3$cam[! colnames(time_df) %in% cam_done]
+      
+      # add the camera:
+      cam_df[, n] <- rep(cam_toadd, nrow(cam_df))
+      
+      break
+    }
+    
+    # change 0 -> NA so can compute mean with na.rm = TRUE:
+    time_df2[time_df2 == 0] <- NA
+    
+    next_cam_df <- as.data.frame(apply(as.matrix(time_df2), 2, mean, na.rm = TRUE))
+    next_cam_df <- tibble::rownames_to_column(next_cam_df, "cam")
+    
+    # chose the next camera to put in the next column as the one with minimal value:
+    next_cam_nm <- next_cam_df$cam[which(next_cam_df[2] == min(next_cam_df[2]))]
+    
+    
+    # if only one camera with the lowest time & if there is one list to test so far:
+    if (length(next_cam_nm) == 1 & (nrow(cam_df) == 1)) {
+      
+      cam_df[1, n] <- next_cam_nm
+      n <- n + 1
+      
+    }
+    
+    # if only one camera with the lowest time & if there is more than one list to test so far:
+    if (length(next_cam_nm) == 1 & (nrow(cam_df) > 1)) {
+      
+      for (j in (1:(length(next_cam_nm)-1))) {
+        
+        cam_df <- dplyr::add_row(cam_df, cam_df[1, ])
+        cam_df[, n] <- next_cam_nm
+        n <- n + 1
+        
+        
+      }
+    }
+    
+    
+    # if two cameras with the lowest time:
+    if (length(next_cam_nm) > 1) {
+      
+
+      # compute all combination of the camera which have the same distance:
+      comb <- combinat::permn(next_cam_nm)
+      
+      # create as many rows as there are similar distances:
+      j <- 1
+      
+      # add enough rows to be able to add all the possible combinations:
+      cam_df <- cam_df[rep(c(1:nrow(cam_df)), length(comb)),]
+      # reset row names:
+      rownames(cam_df) <- c(1:nrow(cam_df))
+      
+      # add combinations to the df:
+      for (m in (1:nrow(cam_df))) {
+        cam_df[m, c(n:(n + length(next_cam_nm) - 1))] <- comb[[j]]
+        j <- j + 1
+      }
+      
+      
+      n <- n + length(next_cam_nm)
+    }
+  }
+  
+  return(cam_df)
+  
+}
+
+
+
+
+#' Compute the SmaxN for a timespan ie here the big interval of a given timestep
+#'
+#' This function computes the SmaxN value of the big interval. It choses the 
+#' highest value for each camera taking into account the distance between the
+#' cameras.
+#' 
+#' @param abund_df a numerical dataframe containing the abundance of a 
+#' given species across continuous time for several cameras. The columns refer
+#' to the cameras and the rows refers to the time. \strong{Time must be given
+#' in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
+#' in the same order in the abund_df and the time_df!}. 
+#' 
+#' @param value the span of the interval on which the SmaxN should
+#' be computed (given in cell number) ie if in the `time_df` the number is 2
+#' then value is 3 (cells).
+#' 
+#' @param timestep the timestep on which the interval begins
+#' 
+#' @param time_df a numerical dataframe containing the minimal time 
+#'  needed for an individual of the studied species to go from a camera to 
+#'  another camera.There are as many rows as there are cameras and there are
+#'  as many columns as there are cameras, thus the dataframe is symmetrical
+#'  and the diagonal is filled with 0. This dataframe is the output of the 
+#'  \code{compute.cam.time} function.
+#' 
+#' @return 
+#'
+#' @example 
+#' 
+#'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
+#'  "B" = c(0,4,2,2,1,3,3), 
+#'  "C" = c(0,0,0,0,1,1,1), 
+#'  "D" = c(1,0,0,0,3,3,3))
+#'  
+#'  time_df <- data.frame("A" = c(0,5,6,6,7), "B" = c(5,0,3,3,3), 
+#'  "C" = c(6,3,0,3,2), "D" = c(6,3,3,0,2), "E" = c(7, 3, 2, 2, 0))
+#'  rownames(time_df) <- c("A", "B", "C", "D", "E")
+#'  
+#'  timestep <- 3
+#'  
+#'  value <- 6
+#'  
+
+compute.SmaxN.bigUI <- function(abund_df,
+                                value,
+                                timestep, 
+                                time_df) {
+  
+  
+  
+  # get the dataframe which says in which order cameras should be looked at:
+  cam_order_df <- compute.cam.order(time_df)
+  
+  
+  # get the bloc (interval) to study:
+  bloc <- abund_df[c(timestep:(value + timestep - 1)), ]
+  
+  # reduce to the number of cameras to use (if all 0):
+  clean_bloc <- bloc[, colSums(bloc) != 0]
+  
+  # get the number of cameras:
+  cam_nb <- ncol(clean_bloc)
+  
+  # if only one camera is kept:
+  if (cam_nb == 1) {
+    return(v = max(clean_bloc))
+  }
+  
+  
+  # if more than one camera to keep:
+  if (cam_nb > 1) {
+    
+    
+    # create a dataframe that will contain the max values chosen for each camera:
+    max_bloc <- as.data.frame(matrix(ncol = 3, nrow = cam_nb))
+    colnames(max_bloc) <- c("values", "cam_nm", "timestep")
+    
+    # create a counter to count camera number:
+    n <- 1
+    
+    # while a max value not chosen for each camera:
+    while (n <= cam_nb) {
+      
+     
+      ## for the first camera: chose the highest value of the cleaned bloc 
+      # ... NOTE: for now, if several highest values, chose the first one
+      if (n == 1) {
+        max <- max(clean_bloc)
+        # chose the first one: EX AEQUO CHANGE
+        max <- max[1]
+        
+        # create a loop to get coordinates:
+        for (i in (1:nrow(clean_bloc))) {
+          for (j in (1:ncol(clean_bloc))) {
+            
+            # span the cells to get the highest value: 
+            if (clean_bloc[i, j] == max) {
+              max_bloc$cam_nm[n] <- colnames(clean_bloc)[j]
+              max_bloc$timestep[n] <- rownames(clean_bloc)[i]
+              max_bloc$values[n] <- max
+              break
+            }
+            
+          }
+          
+          # once an occurrence has been found, stop:
+          if (! is.na(max_bloc$timestep[n])) {
+            break
+          }
+          
+        }
+        
+        n <- n + 1
+        
+      } # end if n == 1 (chose the first value of the bloc)
+      
+      
+      ## for the other cameras (chose values for cameras other than the first one):
+      if (n > 1) {
+        
+        # search the new value (ex: 5):
+        v <- search.next.value(max_bloc, clean_bloc)
+        
+        # know which cell is possible:
+        possible <- next.possible(max_bloc[which(! is.na(max_bloc$values)), ], 
+                                  next_possible = v, time_df)
+      
+          # if ex-aequo:
+        if (length(v) > 1) { 
+        
+          # if at least one cell is possible, get the coord of the first one EX AEQUO:
+          for (r in (1:nrow(possible))) {
+            if (possible$possible[r] == TRUE) {
+               max_bloc$values[n] <- possible$value[r]
+               max_bloc$cam_nm[n] <- possible$cam_nm[r]
+               max_bloc$timestep[n] <- possible$timestep[r]
+               break
+            }
+          } # end get coord
+          
+         
+        } # end if ex-aequo
+        
+        
+        # if only one value:
+        if (length(v) == 1) {
+          max_bloc$values[n] <- possible$value[1]
+          max_bloc$cam_nm[n] <- possible$cam_nm[1]
+          max_bloc$timestep[n] <- possible$timestep[1]
+        } 
+        
+        n <- n + 1
+        
+      } # end if  n > 1
+      
+      
+    } # end while n < nb_cam
+    
+    
+  } # end if more than one camera
+
+
+  
+  
+  
+}
+  

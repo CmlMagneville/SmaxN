@@ -92,9 +92,9 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       
       # get the length of the small interval build the lowest time between ...
       # ... camera pairs:
-      small_UI <- min(apply(abund_df[, ], 1, function(x) min(x[x > 0])))
+      small_UI <- min(apply(time_df[, ], 1, function(x) min(x[x > 0])))
       # idem with max:
-      big_UI <- max(abund_df)
+      big_UI <- max(time_df)
       
       ## create two df for the SmaxN values for each timestep for the ...
       ## ... small_UI and big_UI:
@@ -145,6 +145,13 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       clean_big_SmaxN_df <- big_SmaxN_df[which(! big_SmaxN_df$SmaxN < max_small), ]
       # now this df contains the timesteps to study, in which the general SmaxN is
       
+      
+      ## Check is the SmaxN is already known (if for one timestep: ...
+      # ... SmaxN big UI = SmaxN small UI = max (SmaxN big UI)):
+      max_big <- max(big_SmaxN_df$SmaxN) ### bon df?
+      ##### A COMPLETER ICI POUR CHECKER SI SOLUTION SIMPLE DE SUITE
+      
+      
       # order the rows by decreasing order so that study intervals with the ...
       # ... biggest SmaxN first:
       order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
@@ -159,7 +166,7 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
         
         # compute the SmaxN of the big interval of the given timestep:
         v <- compute.SmaxN.bigUI(abund_df = abund_df,
-                                 value = big_UI,
+                                 value = big_UI + 1, # to use the number of cells
                                  timestep = b, 
                                  time_df = time_df)
         
