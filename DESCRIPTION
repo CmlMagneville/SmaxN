@@ -15,5 +15,5 @@ Description: The purpose of the `SmaxN` package is to compute an extension
 License: GPL-2
 RoxygenNote: 7.1.2
 Imports: 
+    combinat,
     rlist
-Suggests: 
