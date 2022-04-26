@@ -27,6 +27,8 @@
 #' @param bloc a dataframe being the abundance dataframe restricted to the
 #' studied bloc (ie a timestep + span). 
 #' 
+#' @param n the number of the column on which the max must be computed
+#' 
 #' @return the next value to be chosen that is to say the biggest value of the
 #' bloc after the last value in max_bloc. If there are ex-aequos (ie several
 #' cases of the bloc have the next highest value), the function returns a 
@@ -36,51 +38,43 @@
 #' 
 
 
-search.next.value <- function(max_bloc, bloc) {
+search.next.value <- function(max_bloc, bloc, n) {
   
   # copy the bloc:
   bloc2 <- bloc
   
   # create an index which will take the values of the decreasing max values ...
   # ... of the bloc:
-  value <- max(bloc2)
+  # take the max of the column:
+  value <- max(bloc2[, n], na.rm = TRUE)
   
-  # remove cameras which has already been chosen on the path:
-  cam_used <- unique(max_bloc$cam_nm)
-  bloc2 <- bloc2[, which(! colnames(bloc2) %in% cam_used)]
-
-  # while the max value is already on the path, transform cases into NAs
-  while(value %in% max_bloc$value) {
-    bloc2[bloc2 == value] <- NA
-    value <- max(bloc2, na.rm = TRUE)
-  }
-  
+  # # remove cameras which has already been chosen on the path:
+  # cam_used <- unique(max_bloc$cam_nm[which(! is.na(max_bloc$values))])
+  # bloc2 <- bloc2[, which(! colnames(bloc2) %in% cam_used)]
   
   # get the nb of times the highest value occurs:
-  nb_occ <- sum(bloc == value)
+  nb_occ <- sum(bloc[, n] == value)
   
   # create the df that will contain the coordinate(s) of the case(s) ...
   # ... which can be chosen because next highest value:
   next_value <- as.data.frame(matrix(ncol = 3, nrow = nb_occ))
-  colnames(next_value) <- c("value", "cam_nm", "timestep")
-    
-  # index to fill the rows of this matrix 
-  n <- 1
+  colnames(next_value) <- c("values", "cam_nm", "timestep")
+  
+  # index to fill the next_value df:
+  k <- 1
   
   # create a loop to get coordinates:
   for (i in (1:nrow(bloc))) {
-    for (j in (1:ncol(bloc))) {
-
-      if (bloc[i, j] == value) {
-        next_value$value[n] <- value
-        next_value$cam_nm[n] <- colnames(bloc)[j]
-        next_value$timestep[n] <- rownames(bloc)[i]
-        n <- n + 1
+    
+      if (bloc[i, n] == value) {
+        next_value$values[k] <- value
+        next_value$cam_nm[k] <- colnames(bloc)[n]
+        next_value$timestep[k] <- rownames(bloc)[i]
+        k <- k + 1
       }
       
+      
     }
-    
-  }
   
   # return:
   return(next_value)
@@ -363,136 +357,323 @@ compute.cam.order <- function(time_df) {
 #'  "C" = c(0,0,0,0,1,1,1), 
 #'  "D" = c(1,0,0,0,3,3,3))
 #'  
-#'  time_df <- data.frame("A" = c(0,5,6,6,7), "B" = c(5,0,3,3,3), 
-#'  "C" = c(6,3,0,3,2), "D" = c(6,3,3,0,2), "E" = c(7, 3, 2, 2, 0))
-#'  rownames(time_df) <- c("A", "B", "C", "D", "E")
+#'  time_df <- data.frame("A" = c(0,5,6,6), "B" = c(5,0,3,3), 
+#'  "C" = c(6,3,0,3), "D" = c(6,3,3,0))
+#'  rownames(time_df) <- c("A", "B", "C", "D")
 #'  
 #'  timestep <- 3
 #'  
-#'  value <- 6
+#'  value <- 4
 #'  
 
 compute.SmaxN.bigUI <- function(abund_df,
                                 value,
                                 timestep, 
-                                time_df) {
+                                time_df,
+                                SmaxN_small_UI) {
   
-  
+  # create the vector with the SmaxN values for each terminated path:
+  SmaxN_vect <- c()
   
   # get the dataframe which says in which order cameras should be looked at:
   cam_order_df <- compute.cam.order(time_df)
   
+  # create a vector which contains SmaxN values computed for different paths...
+  # ... and/or different bloc: what is of interest is its value not ...
+  # ... its position:
+  SmaxN_value <- c()
   
   # get the bloc (interval) to study:
   bloc <- abund_df[c(timestep:(value + timestep - 1)), ]
   
-  # reduce to the number of cameras to use (if all 0):
-  clean_bloc <- bloc[, colSums(bloc) != 0]
   
-  # get the number of cameras:
-  cam_nb <- ncol(clean_bloc)
-  
-  # if only one camera is kept:
-  if (cam_nb == 1) {
-    return(v = max(clean_bloc))
-  }
-  
-  
-  # if more than one camera to keep:
-  if (cam_nb > 1) {
+  # LOOP on all the camera order that should be studied:
+  for (m in (1:nrow(cam_order_df))) {
+    
+    print(paste0("camera order", sep = " ", m, sep = " ", "on", sep = " ", nrow(cam_order_df)))
     
     
-    # create a dataframe that will contain the max values chosen for each camera:
-    max_bloc <- as.data.frame(matrix(ncol = 3, nrow = cam_nb))
-    colnames(max_bloc) <- c("values", "cam_nm", "timestep")
+    # create a list for a tried path containing for each camera (column) ...
+    # ... the df of possible cells (all TRUE for distance):
+    list <- list()
+
+    # get the camera order:
+    cam_order <- cam_order_df[m, ]
     
-    # create a counter to count camera number:
-    n <- 1
+    # order the bloc based on camera names:
+    bloc <- bloc[, as.vector(unlist(cam_order))]
     
-    # while a max value not chosen for each camera:
-    while (n <= cam_nb) {
+    # reduce to the number of cameras to use (if all 0):
+    clean_bloc <- bloc[, colSums(bloc) != 0]
+    
+    # get the number of cameras:
+    cam_nb <- ncol(clean_bloc)
+    
+    # if only one camera is kept:
+    if (cam_nb == 1) {
+      return(v = max(clean_bloc))
+    }
+    
+    
+    # if more than one camera to keep:
+    if (cam_nb > 1) {
       
-     
-      ## for the first camera: chose the highest value of the cleaned bloc 
-      # ... NOTE: for now, if several highest values, chose the first one
-      if (n == 1) {
-        max <- max(clean_bloc)
-        # chose the first one: EX AEQUO CHANGE
-        max <- max[1]
+      
+      # create a dataframe that will contain the max values chosen for each camera:
+      path <- as.data.frame(matrix(ncol = 3, nrow = 1))
+      colnames(path) <- c("values", "cam_nm", "timestep")
+      
+      # create a counter to count camera number done on the path:
+      n <- 1
+      
+      print(paste0("find max for camera", sep = " ", n))
+      
+      
+      # create a vector that contain values already tested to begin the path
+      # (if a value can not work because of distances between cameras):
+      first_val_vect <- c()
+      
+      # LOOP while a max value not chosen for each camera:
+      while (n <= cam_nb) {
         
-        # create a loop to get coordinates:
-        for (i in (1:nrow(clean_bloc))) {
-          for (j in (1:ncol(clean_bloc))) {
+        
+        ## for the first camera: 
+        if (n == 1) {
+          
+          # create a df with cells with highest values
+          # either one row if one cell or several rows if several cells:
+          # build it with as many rows than there are cells in the bloc (to ...
+          # ... many rows and will delete thereafter):
+          first_cell_df <- as.data.frame(matrix(ncol = 3, 
+                                      nrow = nrow(clean_bloc)*ncol(clean_bloc)))
+          colnames(first_cell_df) <- c("values", "cam_nm", "timestep")
+          
+          
+          # LOOP while the max for the bloc and the first camera (first column ...
+          # ... is already in the values which have been tested, find another one:
+          max <- max(clean_bloc[, 1], na.rm = TRUE)
+          
+          print(paste0("max for camera", sep = " ", n, sep = " ", "is", sep = " ", max))
+          
+          
+          while(max %in% first_val_vect) {
+            
+            # search a new max of the column to test:
+            # create a new df and replace values which have been ...
+            # ... already tested by NA (so can be several cells even if ...
+            # ... one value because several cells can have the same value in ...
+            # ... the studied column):
+            interm_bloc <- clean_bloc
+            interm_bloc[which(interm_bloc == max), 1] <- NA
+            
+            # search a new max:
+            max <- max(interm_bloc[, 1], na.rm = TRUE)
+            
+          } # end of while max is in already tested values:
+          
+          
+          # ... so far we have a new max value to add in the first_val_vect ...
+          # ... and to test:
+          first_val_vect <- append(max, first_val_vect)
+          
+          
+          # LOOP to get the coordinates of cell(s) which have this max value:
+          for (i in (1:nrow(clean_bloc))) {
             
             # span the cells to get the highest value: 
-            if (clean_bloc[i, j] == max) {
-              max_bloc$cam_nm[n] <- colnames(clean_bloc)[j]
-              max_bloc$timestep[n] <- rownames(clean_bloc)[i]
-              max_bloc$values[n] <- max
-              break
+            if (clean_bloc[i, 1] == max) {
+              
+              cam_nm <- colnames(clean_bloc)[1]
+              timestep <- rownames(clean_bloc)[i]
+              values <- max
+              first_cell_df <- dplyr::add_row(first_cell_df, cam_nm = cam_nm,
+                                     timestep = timestep,
+                                     values = values)
+              
+            }
+          } # end loop to get coord of cell(s) having the max value
+          
+          # remove NA rows:
+          first_cell_df <- first_cell_df[which(! is.na(first_cell_df$values)), ]
+          
+          print(paste0("cells for camera", sep = " ", n, sep = " ", "and max =", sep = " ", max,
+                       sep = " ", "is:")) 
+          print(first_cell_df)
+          
+          
+          # take the first row of first_cell_df in the path df:
+          path <- dplyr::add_row(path, first_cell_df[1, ])
+          
+          print("path so far is:")
+          print(path)
+          
+          # update the list gathering all cells for values on the path:
+          list[[n]] <- first_cell_df
+          names(list[n]) <- n
+
+          # update the counter to search the next camera: 
+          n <- n + 1
+          
+        } # end if n == 1 (chose the first value of the bloc)
+        
+        
+        ## for the other cameras (chose values for cameras other than the first one):
+        if (n > 1) {
+          
+          print(paste0("find max for camera", sep = " ", n))
+          
+          # search the new value (ex: 5):
+          v <- search.next.value(max_bloc = path[which(! is.na(path$values)), ],
+                                 bloc = clean_bloc,
+                                 n = n)
+          
+          # know which cell is possible:
+          possible <- next.possible(path[which(! is.na(path$values)), ], 
+                                    next_possible = v, time_df)
+          
+          print(paste0("possible max cells for camera", sep = " ", n, sep = " ", "and max =", sep = " ", max,
+                      sep = " ", "are:"))
+          print(possible)
+        
+          
+          # if some cell(s) is/are possible:
+          if (any(TRUE %in% possible$possible)) {
+            
+            # remove cells that are not possible:
+            possible <- possible[which(possible$possible[] == TRUE), ]
+            
+            
+            # compute the sum: already chosen values + max of columns which ...
+            # ... have not yet been chosen to compare with the highest ...
+            # ... SmaxN of the small UI:
+            
+            # if still several cameras left:
+            if (n < cam_nb) {
+              
+              if (is.data.frame(clean_bloc[, (n + 1):ncol(clean_bloc)])) {
+                
+                S <- sum(path$values, na.rm = TRUE) + unique(v$value) +
+                  sum(apply(clean_bloc[, (n + 1):ncol(clean_bloc)], 2, max, na.rm= TRUE),
+                      na.rm = TRUE)
+              }
+              
             }
             
-          }
-          
-          # once an occurrence has been found, stop:
-          if (! is.na(max_bloc$timestep[n])) {
-            break
-          }
-          
-        }
-        
-        n <- n + 1
-        
-      } # end if n == 1 (chose the first value of the bloc)
-      
-      
-      ## for the other cameras (chose values for cameras other than the first one):
-      if (n > 1) {
-        
-        # search the new value (ex: 5):
-        v <- search.next.value(max_bloc, clean_bloc)
-        
-        # know which cell is possible:
-        possible <- next.possible(max_bloc[which(! is.na(max_bloc$values)), ], 
-                                  next_possible = v, time_df)
-      
-          # if ex-aequo:
-        if (length(v) > 1) { 
-        
-          # if at least one cell is possible, get the coord of the first one EX AEQUO:
-          for (r in (1:nrow(possible))) {
-            if (possible$possible[r] == TRUE) {
-               max_bloc$values[n] <- possible$value[r]
-               max_bloc$cam_nm[n] <- possible$cam_nm[r]
-               max_bloc$timestep[n] <- possible$timestep[r]
-               break
+            # if only one cameras left to add:
+            if (n < cam_nb) {
+              
+              if (is.numeric(clean_bloc[, (n + 1):ncol(clean_bloc)])) {
+                
+                S <- sum(path$values, na.rm = TRUE) + unique(v$value) +
+                  max(clean_bloc[, (n + 1):ncol(clean_bloc)], na.rm= TRUE)
+                
+              }
+
             }
-          } # end get coord
+            
+            # if study the last camera:
+            if (n == cam_nb) {
+              
+              S <- sum(path$values, na.rm = TRUE) + unique(v$value) +
+                max(clean_bloc[, ncol(clean_bloc)], na.rm= TRUE)
+              
+            }
+           
+            
+            # test if S is ok for this path with the new value or if ...
+            # ... S < small:
+            if (S >= SmaxN_small_UI) {
+              sum <- TRUE
+            }
+            
+            if (S < SmaxN_small_UI) {
+              sum <- FALSE
+            }
+            
+            
+            # if the sum == TRUE: then we can take this new value 
+            # and we take the first cell having this value. (If does not work ...
+            # ... after we will take the second cell if there is one etc):
+            if (sum == TRUE) {
+              
+              path <- dplyr::add_row(path, possible[1, -ncol(possible)])
+              
+              print("path so far is:")
+              print(path)
+              
+              # search the next max value:
+              n <- n + 1
+              
+            }
+            
+            
+            # if the sum == FALSE: then taking this value will not lead ...
+            # ... to a "good" SmaxN: it will be lowest than SmaxN_small_UI: ...
+            # ... we have a problem on the step before (the cell we have chosen ...
+            # ... do not lead to a path with a sufficiently high SmaxN):
+            # ... so we must change the cell of the (n-1) camera (column):
+            
+            if (sum == FALSE) {
+              
+              # if the value of the (n-1) camera has several value, we take the next
+              # cell:
+              if (nrow(list[[n-1]]) > 1) {
+                
+                # remove the first cell of the list because does not work:
+                list[[n-1]] <- list[[n-1]][- 1, ]
+                # take the second cell of the list which is now the first one: 
+                path[n, ] <- list[[n-1]][1, ]
+                
+                print("path so far is:")
+                print(path)
+                
+                # get out the test sum "if" and go back to if (n>1):
+                break
+                
+                
+              } # end if the previous value has several cells
+              
+              
+              # if the previous value has only one cell (or if we have ...
+              # ... already removed all possible with previous loop), ...
+              # ... then we must go back to cameras before:
+              if (nrow(list[[n-1]]) == 1) {
+                n <- n - 1
+                break
+              }
+              
+            } # end if sum == FALSE
+            
+
+          } # end of "if some cells are possible"
           
-         
-        } # end if ex-aequo
+          
+          # if no cell is possible, chose another value for previous camera or:
+          if (! any(TRUE %in% possible$possible)) {
+            n <- n - 1
+          }
+
+        
+        # update the list gathering all cells for values on the path:
+        list[[n]] <- possible[, -ncol(possible)]
+        names(list[n]) <- n
+          
+        } # end if  n > 1
         
         
-        # if only one value:
-        if (length(v) == 1) {
-          max_bloc$values[n] <- possible$value[1]
-          max_bloc$cam_nm[n] <- possible$cam_nm[1]
-          max_bloc$timestep[n] <- possible$timestep[1]
-        } 
-        
-        n <- n + 1
-        
-      } # end if  n > 1
+      } # end while n < nb_cam
       
       
-    } # end while n < nb_cam
+    } # end if more than one camera
     
     
-  } # end if more than one camera
-
-
+   # update the vector with the SmaxN values for each terminated path:
+  SmaxN_vect <- append(SmaxN_vect, sum(path$values, na.rm = TRUE))
   
+
+  } # end loop on camera order (build one bloc for each order to follow)
   
+  return(max_SmaxN_timestep = max(SmaxN_vect))
   
 }
   
