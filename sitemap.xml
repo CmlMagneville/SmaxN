@@ -16,7 +16,13 @@
     <loc>/reference/SmaxN-package.html</loc>
   </url>
   <url>
+    <loc>/reference/compute.SmaxN.bigUI.html</loc>
+  </url>
+  <url>
     <loc>/reference/compute.SmaxN.timestep.html</loc>
+  </url>
+  <url>
+    <loc>/reference/compute.cam.order.html</loc>
   </url>
   <url>
     <loc>/reference/compute.cam.time.html</loc>
@@ -26,5 +32,11 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/next.possible.html</loc>
+  </url>
+  <url>
+    <loc>/reference/search.next.value.html</loc>
   </url>
 </urlset>
