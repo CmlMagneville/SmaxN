@@ -347,22 +347,25 @@ compute.cam.order <- function(time_df) {
 #'  as many columns as there are cameras, thus the dataframe is symmetrical
 #'  and the diagonal is filled with 0. This dataframe is the output of the 
 #'  \code{compute.cam.time} function.
+#'  
+#' @param SmaxN_small_UI a numeric value rrefering to the span of the interval
+#'   to study.
 #' 
 #' @return 
 #'
 #' @example 
-#' 
+#'  " define the abundance df:
 #'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
 #'  "B" = c(0,4,2,2,1,3,3), 
 #'  "C" = c(0,0,0,0,1,1,1), 
 #'  "D" = c(1,0,0,0,3,3,3))
-#'  
+#'  # define the time_df
 #'  time_df <- data.frame("A" = c(0,5,6,6), "B" = c(5,0,3,3), 
 #'  "C" = c(6,3,0,3), "D" = c(6,3,3,0))
 #'  rownames(time_df) <- c("A", "B", "C", "D")
-#'  
+#'  # define the timestep:
 #'  timestep <- 3
-#'  
+#'  # define the interval's span:
 #'  value <- 4
 #'  
 

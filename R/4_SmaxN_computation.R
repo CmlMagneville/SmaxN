@@ -46,17 +46,12 @@
 #'  dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
 #'  "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
 #'  rownames(dist_df_ex) <- c("A", "B", "C", "D")
-#'  
 #'  # Build distance dataframe for the example:
 #'  abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3, 0, 6, 2, 0, 1), 
 #'                            "B" = c(2, 2, 2, 2, 0, 0, 0, 0, 1, 2, 1, 0), 
 #'                            "C" = c(2, 0, 1, 0, 0, 4, 2, 2, 3, 0, 0, 4), 
 #'                            "D" = c(0, 1, 0, 1, 0, 6, 1, 1, 6, 4, 2, 1))
 #'  
-#'  # Run the function:
-#'  compute.max.abund(dist_df = dist_df_ex, 
-#'                 fish_speed = 1.6, 
-#'                 abund_df   = abund_df_ex)
 #'                 
 #' @export
 #' 
