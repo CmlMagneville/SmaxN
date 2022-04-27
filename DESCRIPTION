@@ -16,4 +16,5 @@ License: GPL-2
 RoxygenNote: 7.1.2
 Imports: 
     combinat,
-    rlist
+    rlist,
+    tibble
