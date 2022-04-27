@@ -2,9 +2,9 @@
 % Please edit documentation in R/2_SmaxN_timestep.R
 \name{compute.SmaxN.timestep}
 \alias{compute.SmaxN.timestep}
-\title{Compute the Synchronised MaxN for a given second and a given camera}
+\title{Compute the Synchronised MaxN for a given second and a given span}
 \usage{
-compute.SmaxN.timestep(time_df, abund_df, cam_nm, timestep)
+compute.SmaxN.timestep(time_df, abund_df, timestep, value)
 }
 \arguments{
 \item{time_df}{a numerical dataframe containing the minimal time 
@@ -20,18 +20,18 @@ to the cameras and the rows refers to the time. \strong{Time must be given
 in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
 in the same order in the abund_df and the time_df!}.}
 
-\item{cam_nm}{the name of the camera for which the SmaxN must be computed}
-
 \item{timestep}{the number of the row to the studied timestep}
+
+\item{value}{the value of the span of the interval on which the SmaxN is 
+computed. Note: if the span is of 2 seconds, then the interval gathers 
+3 cases of the `abund_df`.}
 }
 \value{
-the function returns a list of the Synchronised MaxN (SmaxN) values
-for all the cameras and a given second (timestep).
+the function returns the SmaxN value for the given timestep and span
 }
 \description{
-This function computes the Synchronised MaxN (SmaxN) for a given second and
-a given camera. It used the time dataframe gathering the time it takes for 
-an individual of a given species to go from one camera to another.
+This function computes the Synchronised MaxN (SmaxN) for a given second and 
+the "n" seconds after. "n" being set up by the "value" parameter .
 }
 \examples{
  # Build distance dataframe for the example:
