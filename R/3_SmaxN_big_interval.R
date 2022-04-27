@@ -53,7 +53,7 @@ search.next.value <- function(max_bloc, bloc, n) {
   # bloc2 <- bloc2[, which(! colnames(bloc2) %in% cam_used)]
   
   # get the nb of times the highest value occurs:
-  nb_occ <- sum(bloc[, n] == value)
+  nb_occ <- sum(bloc[, n] == value, na.rm = TRUE)
   
   # create the df that will contain the coordinate(s) of the case(s) ...
   # ... which can be chosen because next highest value:
@@ -64,7 +64,7 @@ search.next.value <- function(max_bloc, bloc, n) {
   k <- 1
   
   # create a loop to get coordinates:
-  for (i in (1:nrow(bloc))) {
+  for (i in (1:nrow(na.omit(bloc)))) {
     
       if (bloc[i, n] == value) {
         next_value$values[k] <- value
@@ -151,8 +151,9 @@ next.possible <- function(max_bloc, next_possible, time_df) {
       }
       
       # compute the real timespan between the value on the path and the next possible:
+      # add +1 because time_df is in seconds so number of timesteps + 1
       ### PEUT POSER PROBLEME ICI EN FONCTION DE LA CLASSE DES TIME STEPS (CONVERTIR SI EN HMS)
-      delta_real <- abs(as.numeric(max_bloc$timestep[i]) - as.numeric(next_possible2$timestep[j]) + 1)
+      delta_real <- abs(as.numeric(max_bloc$timestep[i]) - as.numeric(next_possible2$timestep[j])) + 1
 
       # check the deltas:
       if (delta_real > delta_ok) {
@@ -394,11 +395,6 @@ compute.SmaxN.bigUI <- function(abund_df,
   for (m in (1:nrow(cam_order_df))) {
     
     print(paste0("camera order", sep = " ", m, sep = " ", "on", sep = " ", nrow(cam_order_df)))
-    
-    
-    # create a list for a tried path containing for each camera (column) ...
-    # ... the df of possible cells (all TRUE for distance):
-    list <- list()
 
     # get the camera order:
     cam_order <- cam_order_df[m, ]
@@ -436,12 +432,23 @@ compute.SmaxN.bigUI <- function(abund_df,
       # (if a value can not work because of distances between cameras):
       first_val_vect <- c()
       
+      
+      # create vectors that contain values already tested for a given camera (n):
+      for (j in (2:cam_nb)) {
+        # create a vector that contain the already tested value for the given camera:
+        assign(paste0("already_tested_max_n", sep = "_", j), c())
+      }
+      
       # LOOP while a max value not chosen for each camera:
       while (n <= cam_nb) {
         
         
         ## for the first camera: 
         if (n == 1) {
+          
+          # create a list for a tried path containing for each camera (column) ...
+          # ... the df of possible cells (all TRUE for distance):
+          list <- list()
           
           # create a df with cells with highest values
           # either one row if one cell or several rows if several cells:
@@ -507,6 +514,9 @@ compute.SmaxN.bigUI <- function(abund_df,
           # take the first row of first_cell_df in the path df:
           path <- dplyr::add_row(path, first_cell_df[1, ])
           
+          # remove the first row which is filled with NAs:
+          path <- path[-1, ]
+          
           print("path so far is:")
           print(path)
           
@@ -520,6 +530,8 @@ compute.SmaxN.bigUI <- function(abund_df,
         } # end if n == 1 (chose the first value of the bloc)
         
         
+        
+        
         ## for the other cameras (chose values for cameras other than the first one):
         if (n > 1) {
           
@@ -530,9 +542,29 @@ compute.SmaxN.bigUI <- function(abund_df,
                                  bloc = clean_bloc,
                                  n = n)
           
+          # # while the max has already been tested:
+          while(unique(v$value) %in% get(paste0("already_tested_max_n", sep = "_", n))) {
+          #
+          #   # search a new max of the column to test:
+          #   # create a new df and replace values which have been ...
+          #   # ... already tested by NA (so can be several cells even if ...
+          #   # ... one value because several cells can have the same value in ...
+          #   # ... the studied column):
+              interm_bloc <- clean_bloc
+              interm_bloc[which(interm_bloc[, n] == unique(v$value)), n] <- NA
+          
+          #   # search a new max:
+              v <- search.next.value(max_bloc = path[which(! is.na(path$values)), ],
+                                     bloc = interm_bloc,
+                                     n = n)
+
+          } # end of while max is in already tested values:
+
+          
           # know which cell is possible:
           possible <- next.possible(path[which(! is.na(path$values)), ], 
                                     next_possible = v, time_df)
+          
           
           print(paste0("possible max cells for camera", sep = " ", n, sep = " ", "and max =", sep = " ", max,
                       sep = " ", "are:"))
@@ -593,6 +625,7 @@ compute.SmaxN.bigUI <- function(abund_df,
               sum <- FALSE
             }
             
+            print(paste0("sum value is", sep = " ", sum))
             
             # if the sum == TRUE: then we can take this new value 
             # and we take the first cell having this value. (If does not work ...
@@ -607,16 +640,65 @@ compute.SmaxN.bigUI <- function(abund_df,
               # search the next max value:
               n <- n + 1
               
+              
+              # update the list gathering all cells for values on the path:
+              list[[n - 1]] <- possible[, -ncol(possible)]
+              names(list[n - 1]) <- n - 1
+              
             }
             
             
             # if the sum == FALSE: then taking this value will not lead ...
             # ... to a "good" SmaxN: it will be lowest than SmaxN_small_UI: ...
-            # ... we have a problem on the step before (the cell we have chosen ...
+            # ... we have a problem on the step before (the value we have chosen ...
             # ... do not lead to a path with a sufficiently high SmaxN):
-            # ... so we must change the cell of the (n-1) camera (column):
+            # ... so we must abandon the path (as we start by using max of ...
+            # ... each column) and start a new one with n <- 1:
             
             if (sum == FALSE) {
+              
+              n <- 1
+              
+              # create a clean path df:
+              path <- as.data.frame(matrix(ncol = 3, nrow = 1))
+              colnames(path) <- c("values", "cam_nm", "timestep")
+              
+            } # end if sum == FALSE
+
+
+          } # end of "if some cells are possible"
+          
+          
+          # if no cell is possible, chose another value for previous camera:
+          if (! any(TRUE %in% possible$possible)) {
+            
+            
+            # if it is the second value (camera), if we remove the first row than no dataframe so put NAs:
+            if ((n-1) == 1)  {
+              
+              # recreate a unfilled path df:
+              path <- as.data.frame(matrix(ncol = 3, nrow = 1))
+              colnames(path) <- c("values", "cam_nm", "timestep")
+              
+              n <- n - 1
+  
+            }
+            
+            else {
+              
+              # if the previous value has only one cell (or if we have ...
+              # ... already removed all possible with previous loop), ...
+              # ... then we will not use the n value:
+              if (nrow(list[[n-1]]) == 1) {
+                
+                # update the values already tested for the (n) cam
+                assign(paste0("already_tested_max_n", sep = "_", n), append(
+                  get(paste0("already_tested_max_n", sep = "_", n)),
+                  unique(v$values)))
+                
+                break
+                
+              }
               
               # if the value of the (n-1) camera has several value, we take the next
               # cell:
@@ -625,7 +707,7 @@ compute.SmaxN.bigUI <- function(abund_df,
                 # remove the first cell of the list because does not work:
                 list[[n-1]] <- list[[n-1]][- 1, ]
                 # take the second cell of the list which is now the first one: 
-                path[n, ] <- list[[n-1]][1, ]
+                path[n - 1, ] <- list[[n-1]][1, ]
                 
                 print("path so far is:")
                 print(path)
@@ -636,47 +718,27 @@ compute.SmaxN.bigUI <- function(abund_df,
                 
               } # end if the previous value has several cells
               
-              
-              # if the previous value has only one cell (or if we have ...
-              # ... already removed all possible with previous loop), ...
-              # ... then we must go back to cameras before:
-              if (nrow(list[[n-1]]) == 1) {
-                n <- n - 1
-                break
-              }
-              
-            } # end if sum == FALSE
+            } #  end if not the second camera and no cell left on the first
             
-
-          } # end of "if some cells are possible"
-          
-          
-          # if no cell is possible, chose another value for previous camera or:
-          if (! any(TRUE %in% possible$possible)) {
-            n <- n - 1
-          }
-
-        
-        # update the list gathering all cells for values on the path:
-        list[[n]] <- possible[, -ncol(possible)]
-        names(list[n]) <- n
-          
-        } # end if  n > 1
-        
-        
-      } # end while n < nb_cam
+          } # end if no cell is possible
+              
       
-      
-    } # end if more than one camera
+    } # end if  n > 1
     
     
-   # update the vector with the SmaxN values for each terminated path:
-  SmaxN_vect <- append(SmaxN_vect, sum(path$values, na.rm = TRUE))
+  } # end while n < nb_cam
   
+  
+} # end if more than one camera
 
-  } # end loop on camera order (build one bloc for each order to follow)
-  
-  return(max_SmaxN_timestep = max(SmaxN_vect))
-  
+
+# update the vector with the SmaxN values for each terminated path:
+SmaxN_vect <- append(SmaxN_vect, sum(path$values, na.rm = TRUE))
+print(SmaxN_vect)
+
+} # end loop on camera order (build one bloc for each order to follow)
+
+return(max_SmaxN_timestep = max(SmaxN_vect))
+
 }
   
