@@ -75,5 +75,4 @@ SmaxN_small_UI <- 10
 compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
                     SmaxN_small_UI) 
 
-# first: run infinitely: must check by running by hand!
 
