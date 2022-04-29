@@ -51,8 +51,7 @@ SmaxN_small_UI <- 10
 compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
                     SmaxN_small_UI) 
 
-# first: run infinitely: must check by running by hand!
-# ok I did not remove camera on the path that should be remove
+
 
 
 # Exemple 3: Exemple Seb: Big interval and have to return in cam
