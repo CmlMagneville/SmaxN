@@ -138,3 +138,46 @@ SmaxN_small_UI <- 17
 
 compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
                     SmaxN_small_UI)
+
+# ok because of camera order which changes and so 8 is taken
+
+
+# Exemple 7: question sur la premiere camera: change t on la premiere valeur
+# camera order is not with A:
+
+abund_df <- data.frame("A" = c(10,8,4,0), "B" = c(0,1,1,4), 
+                       "C" = c(1,0,0,4), "D" = c(6,2,0,2))
+
+time_df <- data.frame("A" = c(0,2,2,3), "B" = c(2,0,3,3), 
+                      "C" = c(2,3,0,5), "D" = c(3,3,5,0))
+rownames(time_df) <- c("A", "B", "C", "D")
+
+timestep <- 1
+
+value <- 4
+
+SmaxN_small_UI <- 18
+
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
+                    SmaxN_small_UI)
+
+# it is working! 
+
+# Exemple 8: question sur la premiere camera: change t on la premiere valeur
+# what if the  pb appears on camera which is not the first:
+
+abund_df <- data.frame("A" = c(0,1,1,4), "B" = c(1,0,0,4), 
+                       "C" = c(10,8,4,0), "D" = c(6,2,0,2))
+
+time_df <- data.frame("A" = c(0,2,2,3), "B" = c(2,0,3,3), 
+                      "C" = c(2,3,0,5), "D" = c(3,3,5,0))
+rownames(time_df) <- c("A", "B", "C", "D")
+
+timestep <- 1
+
+value <- 4
+
+SmaxN_small_UI <- 18
+
+compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+                    SmaxN_small_UI)
