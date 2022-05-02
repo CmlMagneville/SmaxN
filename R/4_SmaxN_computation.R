@@ -121,15 +121,15 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
         small_SmaxN_df <- dplyr::add_row(row = rownames(abund_df)[i], SmaxN = small, small_SmaxN_df)
         big_SmaxN_df <- dplyr::add_row(row = rownames(abund_df)[i], SmaxN = big, big_SmaxN_df)
         
-        # remove first rows filled with Na and use numerical format:
-        small_SmaxN_df <- small_SmaxN_df[-1, ]
-        big_SmaxN_df <- big_SmaxN_df[-1, ]
         
         small_SmaxN_df$SmaxN <- as.numeric(small_SmaxN_df$SmaxN)
         big_SmaxN_df$SmaxN <- as.numeric(big_SmaxN_df$SmaxN)
         
       } # end computation of Smaxn for each timestep and small and big spans
       
+      # remove first rows filled with Na and use numerical format:
+      small_SmaxN_df <- small_SmaxN_df[-1, ]
+      big_SmaxN_df <- big_SmaxN_df[-1, ]
       
       # Compute the max of SmaxN of small spans for all timesteps:
       max_small <- max(small_SmaxN_df$SmaxN)

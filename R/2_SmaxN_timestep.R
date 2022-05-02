@@ -51,7 +51,7 @@ compute.SmaxN.timestep <- function(time_df, abund_df, timestep, value) {
        >= value + 1) {
     
     # get the number of the row where the timestep is:
-    row_nb <- as.numeric(rownames(abund_df2[which(abund_df2$rownames == timestep), ]))
+    row_nb <- as.numeric(abund_df2$rownames[which(abund_df2$rownames == timestep)])
     
     # create a vector that will contain one abundance value per camera to ...
     # ... sum them once the process is finished:

@@ -64,7 +64,7 @@ search.next.value <- function(max_bloc, bloc, n) {
   k <- 1
   
   # create a loop to get coordinates:
-  for (i in (1:nrow(na.omit(bloc)))) {
+  for (i in (1:nrow(bloc))) {
     
     if (! is.na(bloc[i, n])) {
       
@@ -539,6 +539,11 @@ compute.SmaxN.bigUI <- function(abund_df,
     # get the number of cameras:
     cam_nb <- ncol(clean_bloc)
     
+    # if no camera to keep:
+    if (cam_nb == 0) {
+      return("max_SmaxN_timestep" = 0)
+    }
+    
     # if only one camera is kept:
     if (cam_nb == 1) {
       return("max_SmaxN_timestep" = max(clean_bloc))
@@ -618,17 +623,12 @@ compute.SmaxN.bigUI <- function(abund_df,
             # ... one value because several cells can have the same value in ...
             # ... the studied column):
             interm_bloc <- clean_bloc
-            interm_bloc[which(interm_bloc == max), 1] <- NA
+            interm_bloc[interm_bloc[, 1] %in% first_val_vect, 1] <- NA
             
             # search a new max:
             max <- max(interm_bloc[, 1], na.rm = TRUE)
             
           } # end of while max is in already tested values:
-          
-          
-          # ... so far we have a new max value to add in the first_val_vect ...
-          # ... and to test:
-          first_val_vect <- append(max, first_val_vect)
           
           
           # LOOP to get the coordinates of cell(s) which have this max value:
@@ -855,12 +855,44 @@ compute.SmaxN.bigUI <- function(abund_df,
               print("if second cam")
               
               
-              # recreate a unfilled path df:
-              path <- as.data.frame(matrix(ncol = 3, nrow = 1))
-              colnames(path) <- c("values", "cam_nm", "timestep")
+              # if the value of the 1st camera has several cell, we take the next
+              # cell:
+              if (nrow(list[[n-1]]) > 1) {
+                
+                # remove the first cell of the list because does not work:
+                list[[n-1]] <- list[[n-1]][- 1, ]
+                # take the second cell of the list which is now the first one: 
+                path[n - 1, ] <- list[[n-1]][1, ]
+                
+                print("path so far is:")
+                print(path)
+                
+              } # end if the previous value has several cells
               
-              n <- n - 1
               
+              # if the previous cam and value have only one cell (or if we have ...
+              # ... already removed all possible with previous loop), ...
+              # ... then we will not use the n value:
+              if (nrow(list[[n-1]]) == 1) {
+                
+                print("if the 1 cam has only one cell")
+                
+                # recreate a unfilled path df:
+                path <- as.data.frame(matrix(ncol = 3, nrow = 1))
+                colnames(path) <- c("values", "cam_nm", "timestep")
+                
+                # add the value to the first_cam_vect because value for the ...
+                # ... first camera does not work: tested all 1st cam cells ...
+                # ... and all 2nd cam cells:
+                first_val_vect <- append(first_val_vect, unique(list[[n-1]]$values))
+                
+                # check a new value for the first cam:
+                n <- n - 1
+                
+                print(paste0("n is equal to", sep = " ", n))
+                
+              }
+
             }
             
             # if it is not the second camera:
