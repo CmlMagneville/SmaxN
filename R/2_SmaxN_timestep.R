@@ -47,8 +47,7 @@ compute.SmaxN.timestep <- function(time_df, abund_df, timestep, value) {
   # if there is enough rows to build the "bloc" on which SmaxN should be ...
   # ... computed according to the "value" parameter:
   # ... note: number of cases = number of seconds + 1
-  if ((nrow(abund_df2) - as.numeric(rownames(abund_df2[which(abund_df2$rownames == timestep), ])) + 1)
-       >= value + 1) {
+  if (as.numeric(abund_df2[which(abund_df2$rownames == timestep), "rownames"]) + value - 1 <= nrow(abund_df2)) {
     
     # get the number of the row where the timestep is:
     row_nb <- as.numeric(abund_df2$rownames[which(abund_df2$rownames == timestep)])
@@ -62,7 +61,7 @@ compute.SmaxN.timestep <- function(time_df, abund_df, timestep, value) {
     for (j in (2:ncol(abund_df2))) {
       
       # get all the abundance values in the studied interval for the given cam:
-      UI_abund_cam <- abund_df2[c(row_nb:(row_nb + value)), j]
+      UI_abund_cam <- abund_df2[c(row_nb:(row_nb + value - 1)), j]
       
       # append the max value of this abundance data for the given cam and interval:
       max_cam_vect <- append(max(UI_abund_cam), max_cam_vect)
