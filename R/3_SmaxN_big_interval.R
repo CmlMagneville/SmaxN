@@ -419,7 +419,7 @@ compute.cam.order <- function(time_df) {
     }
     
     
-    # if two cameras with the lowest time:
+    # if more than one cameras with the lowest time:
     if (length(next_cam_nm) > 1) {
       
       
@@ -436,8 +436,14 @@ compute.cam.order <- function(time_df) {
       
       # add combinations to the df:
       for (m in (1:nrow(cam_df))) {
-        cam_df[m, c(n:(n + length(next_cam_nm) - 1))] <- comb[[j]]
-        j <- j + 1
+        
+        # while there new combination to add:
+        while (j <= length(comb)) {
+          cam_df[m, c(n:(n + length(next_cam_nm) - 1))] <- comb[[j]]
+          j <- j + 1
+          break
+        }
+        
       }
       
       
@@ -445,7 +451,8 @@ compute.cam.order <- function(time_df) {
     }
   }
   
-  return(cam_df)
+  # return cam_df without rows with NA (uncompleted because not needed)
+  return(cam_df[which(! is.na(cam_df[, ncol(cam_df)])), ])
   
 }
 
@@ -875,19 +882,12 @@ compute.SmaxN.bigUI <- function(abund_df,
               # ... then we will not use the n value:
               if (nrow(list[[n-1]]) == 1) {
                 
-                print("if the 1 cam has only one cell")
+                print("if the 1st cam has only one cell")
                 
-                # recreate a unfilled path df:
-                path <- as.data.frame(matrix(ncol = 3, nrow = 1))
-                colnames(path) <- c("values", "cam_nm", "timestep")
-                
-                # add the value to the first_cam_vect because value for the ...
-                # ... first camera does not work: tested all 1st cam cells ...
-                # ... and all 2nd cam cells:
-                first_val_vect <- append(first_val_vect, unique(list[[n-1]]$values))
-                
-                # check a new value for the first cam:
-                n <- n - 1
+                # update the values already tested for the (n) cam
+                assign(paste0("already_tested_max_n", sep = "_", n), append(
+                  get(paste0("already_tested_max_n", sep = "_", n)),
+                  unique(v$values)))
                 
                 print(paste0("n is equal to", sep = " ", n))
                 
@@ -915,6 +915,11 @@ compute.SmaxN.bigUI <- function(abund_df,
                   unique(v$values)))
 
                 print(paste0("n is equal to", sep = " ", n))
+                
+                # and run again for the (n-1) camera to have all possible cells:
+                path <- path[-nrow(path), ]
+                
+                n <- n - 1
 
               }
               
