@@ -133,8 +133,7 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       
       # Compute the max of SmaxN of small spans for all timesteps:
       max_small <- max(small_SmaxN_df$SmaxN)
-      
-      
+
       
       ## Remove timesteps not to study ie the one with big_UI SmaxN < max_small:
       clean_big_SmaxN_df <- big_SmaxN_df[which(! big_SmaxN_df$SmaxN < max_small), ]
@@ -143,40 +142,69 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       
       ## Check is the SmaxN is already known (if for one timestep: ...
       # ... SmaxN big UI = SmaxN small UI = max (SmaxN big UI)):
-      max_big <- max(big_SmaxN_df$SmaxN) ### bon df?
-      ##### A COMPLETER ICI POUR CHECKER SI SOLUTION SIMPLE DE SUITE
+      max_big <- max(big_SmaxN_df$SmaxN) 
       
+      # span on the two dfs:
+      for (k in small_SmaxN_df$row) {
+        for (m in big_SmaxN_df$row) {
+          
+          # if the same row:
+          if (k == m) {
+            
+            # if SmaxN is the same then stop, we have the SmaxN:
+            if ((small_SmaxN_df$SmaxN[as.numeric(k)] == big_SmaxN_df$SmaxN[as.numeric(m)])) {
+              if (small_SmaxN_df$SmaxN[as.numeric(k)] == max_big) {
+                print("SmaxN small UI = SmaxN big UI")
+                return("SmaxN" = small_SmaxN_df$SmaxN[k])
+              }
+            }
+          }
+        }
+      }
+
       
       # order the rows by decreasing order so that study intervals with the ...
       # ... biggest SmaxN first:
       order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
       
       
-      ## for each timestep to study - TO TEST FROM HERE ONCE BIG FCT MADE:
+      ## for each timestep to study:
       
       # create a list that will contain the SmaxN of each big UI:
       SmaxN_vect <- c()
       
-      for (b in (1:nrow(order_big_SmaxN_df))) {
+      b <- 1
+      
+      while (b <= nrow(order_big_SmaxN_df)) {
+        
+        print(paste0("STUDYING the abundance df timestep number",
+                     sep = " ", b))
         
         # compute the SmaxN of the big interval of the given timestep:
-        v <- compute.SmaxN.bigUI(abund_df = abund_df,
-                                 value = big_UI + 1, # to use the number of cells
-                                 timestep = b, 
-                                 time_df = time_df)
+        v <- compute.SmaxN.bigUI2(abund_df = abund_df,
+                                 value = big_UI, 
+                                 timestep = as.numeric(order_big_SmaxN_df$row[b]), 
+                                 time_df = time_df,
+                                 SmaxN_small_UI = max_small)
         
         # add the SmaxN of the given timestep to the SmaxN vect:
         SmaxN_vect <- append(SmaxN_vect, v)
         
         # Remove timesteps not to study ie the one with big_UI SmaxN < the SmaxN we just computed:
+        # but as if I remove timesteps the loop will have problems:
+        # 
         clean_big_SmaxN_df <- order_big_SmaxN_df[which(! order_big_SmaxN_df$SmaxN < v), ]
 
         # order the rows by decreasing order so that study intervals with the ...
         # ... biggest SmaxN first:
         order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
         
+        b <- b + 1
         
-
+        if (b > nrow(order_big_SmaxN_df)) {
+          break
+        }  
+        
       } # end for each timestep to study
       
       

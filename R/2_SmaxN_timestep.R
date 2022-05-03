@@ -1,6 +1,6 @@
-#' Compute the Synchronised MaxN for a given second and a given span
+#' Compute the max of cameras for a given second and a given span
 #'
-#' This function computes the Synchronised MaxN (SmaxN) for a given second and 
+#' This function computes the maximal value of abundance for a given second and 
 #' the "n" seconds after. "n" being set up by the "value" parameter .
 #' 
 #' @param time_df a numerical dataframe containing the minimal time 
