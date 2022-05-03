@@ -1325,7 +1325,7 @@ compute.SmaxN.bigUI2 <- function(abund_df,
                   path <- as.data.frame(matrix(ncol = 3, nrow = 1))
                   colnames(path) <- c("values", "cam_nm", "timestep")
                   
-                  n <- n - 1
+                  n <- 1
                   
                 }
                 
