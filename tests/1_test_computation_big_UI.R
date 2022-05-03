@@ -29,7 +29,7 @@ value <- 4
 
 SmaxN_small_UI <- 10 # computed before
 
-compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
                     SmaxN_small_UI) 
 
 
@@ -51,7 +51,7 @@ value <- 6
 
 SmaxN_small_UI <- 10
 
-compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
                     SmaxN_small_UI) 
 
 
@@ -74,7 +74,7 @@ value <- 6
 
 SmaxN_small_UI <- 10
 
-compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
                     SmaxN_small_UI) 
 
 
@@ -95,7 +95,7 @@ value <- 5
 
 SmaxN_small_UI <- 10
 
-compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
                     SmaxN_small_UI) 
 
 
@@ -117,7 +117,7 @@ value <- 5
 
 SmaxN_small_UI <- 10
 
-compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
                     SmaxN_small_UI)
 
 
@@ -136,7 +136,7 @@ value <- 4
 
 SmaxN_small_UI <- 17
 
-compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
                     SmaxN_small_UI)
 
 # ok because of camera order which changes and so 8 is taken
@@ -179,5 +179,5 @@ value <- 4
 
 SmaxN_small_UI <- 18
 
-compute.SmaxN.bigUI(abund_df, value, timestep, time_df,
+compute.SmaxN.bigUI2(abund_df, value, timestep, time_df,
                     SmaxN_small_UI)

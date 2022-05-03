@@ -1094,6 +1094,7 @@ compute.SmaxN.bigUI2 <- function(abund_df,
             first_cell_df2 <- first.cam.possible(time_df, first_cell_df, SmaxN_small_UI, bloc)
             
             print(paste0("max for camera", sep = " ", n, sep = " ", "is", sep = " ", unique(first_cell_df2$values)))
+            print(first_cell_df2)
             
             # if at least one cell is possible:
             if (any(TRUE %in% first_cell_df2$possible)) {
@@ -1270,6 +1271,8 @@ compute.SmaxN.bigUI2 <- function(abund_df,
                 path <- as.data.frame(matrix(ncol = 3, nrow = 1))
                 colnames(path) <- c("values", "cam_nm", "timestep")
                 
+                break
+                
               } # end if sum == FALSE
               
               
@@ -1316,6 +1319,13 @@ compute.SmaxN.bigUI2 <- function(abund_df,
                     unique(v$values)))
                   
                   print(paste0("n is equal to", sep = " ", n))
+
+                  # recompute the values for the 1st cam:
+                  # run again for the (n-1) camera to have all possible cells:
+                  path <- as.data.frame(matrix(ncol = 3, nrow = 1))
+                  colnames(path) <- c("values", "cam_nm", "timestep")
+                  
+                  n <- n - 1
                   
                 }
                 
