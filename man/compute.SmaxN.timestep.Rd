@@ -2,7 +2,7 @@
 % Please edit documentation in R/2_SmaxN_timestep.R
 \name{compute.SmaxN.timestep}
 \alias{compute.SmaxN.timestep}
-\title{Compute the Synchronised MaxN for a given second and a given span}
+\title{Compute the max of cameras for a given second and a given span}
 \usage{
 compute.SmaxN.timestep(time_df, abund_df, timestep, value)
 }
@@ -30,7 +30,7 @@ computed. Note: if the span is of 2 seconds, then the interval gathers
 the function returns the SmaxN value for the given timestep and span
 }
 \description{
-This function computes the Synchronised MaxN (SmaxN) for a given second and 
+This function computes the maximal value of abundance for a given second and 
 the "n" seconds after. "n" being set up by the "value" parameter .
 }
 \examples{

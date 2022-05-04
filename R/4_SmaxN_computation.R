@@ -91,7 +91,7 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       # idem with max:
       big_UI <- max(time_df)
       
-      ## create two df for the SmaxN values for each timestep for the ...
+      ## create two df for the false "SmaxN" values for each timestep for the ...
       ## ... small_UI and big_UI:
       small_SmaxN_df <- as.data.frame(matrix(ncol = 2, nrow = 1))
       colnames(small_SmaxN_df) <- c("row", "SmaxN")
@@ -178,7 +178,7 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
       while (b <= nrow(order_big_SmaxN_df)) {
         
         print(paste0("STUDYING the abundance df timestep number",
-                     sep = " ", b))
+                     sep = " ", order_big_SmaxN_df$row[b]))
         
         # compute the SmaxN of the big interval of the given timestep:
         v <- compute.SmaxN.bigUI2(abund_df = abund_df,
@@ -201,11 +201,11 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
         
         b <- b + 1
         
-        if (b > nrow(order_big_SmaxN_df)) {
-          break
-        }  
+        # if (b > nrow(order_big_SmaxN_df)) {
+        #   break
+        # }
         
-      } # end for each timestep to study
+      } # end while
       
       
       # Compute the general SmaxN:
@@ -257,6 +257,8 @@ compute.max.abund <- function(dist_df, fish_speed, abund_df) {
     
   # if there only one camera, return only maxN:
   if (ncol(dist_df) == 1) {
+    print("SmaxN package has been computed for cases where more than one camera
+          is used.")
     return(list(maxN  = max(abund_df)))
   }
 

@@ -218,7 +218,7 @@ next.possible <- function(max_bloc, next_possible, time_df) {
 #' 
 #' @return the completed \code{first_cell_df}
 #'
-#' @example 
+#' @examples 
 #' 
 #'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
 #'  "B" = c(0,4,2,2,1,3,3), 
@@ -340,7 +340,7 @@ first.cam.possible <- function(time_df, first_cell_df,
 #' 
 #' @return 
 #'
-#' @example 
+#' @examples 
 #' 
 #'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
 #'  "B" = c(0,4,2,2,1,3,3), 
@@ -489,8 +489,8 @@ compute.cam.order <- function(time_df) {
 #' 
 #' @return 
 #'
-#' @example 
-#'  " define the abundance df:
+#' @examples 
+#'  # define the abundance df:
 #'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
 #'  "B" = c(0,4,2,2,1,3,3), 
 #'  "C" = c(0,0,0,0,1,1,1), 
@@ -967,6 +967,54 @@ compute.SmaxN.bigUI <- function(abund_df,
 
 ###################### VERSION 2: test de toutes les valeurs de la cam centrale #######
 
+
+#' Compute the SmaxN for a timespan ie here the big interval of a given timestep
+#'
+#' This function computes the SmaxN value of the big interval. It choses the 
+#' highest value for each camera taking into account the distance between the
+#' cameras.
+#' 
+#' @param abund_df a numerical dataframe containing the abundance of a 
+#' given species across continuous time for several cameras. The columns refer
+#' to the cameras and the rows refers to the time. \strong{Time must be given
+#' in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
+#' in the same order in the abund_df and the time_df!}. 
+#' 
+#' @param value the span of the interval on which the SmaxN should
+#' be computed (given in cell number) ie if in the `time_df` the number is 2
+#' then value is 3 (cells).
+#' 
+#' @param timestep the timestep on which the interval begins
+#' 
+#' @param time_df a numerical dataframe containing the minimal time 
+#'  needed for an individual of the studied species to go from a camera to 
+#'  another camera.There are as many rows as there are cameras and there are
+#'  as many columns as there are cameras, thus the dataframe is symmetrical
+#'  and the diagonal is filled with 0. This dataframe is the output of the 
+#'  \code{compute.cam.time} function.
+#'  
+#' @param SmaxN_small_UI a numeric value rrefering to the span of the interval
+#'   to study.
+#' 
+#' @return 
+#' 
+#' @export
+#'
+#' @examples 
+#'  # define the abundance df:
+#'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
+#'  "B" = c(0,4,2,2,1,3,3), 
+#'  "C" = c(0,0,0,0,1,1,1), 
+#'  "D" = c(1,0,0,0,3,3,3))
+#'  # define the time_df
+#'  time_df <- data.frame("A" = c(0,5,6,6), "B" = c(5,0,3,3), 
+#'  "C" = c(6,3,0,3), "D" = c(6,3,3,0))
+#'  rownames(time_df) <- c("A", "B", "C", "D")
+#'  # define the timestep:
+#'  timestep <- 3
+#'  # define the interval's span:
+#'  value <- 4
+#'
 
 
 compute.SmaxN.bigUI2 <- function(abund_df,
