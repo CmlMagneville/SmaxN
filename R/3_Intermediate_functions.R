@@ -325,27 +325,27 @@ frame.possible <- function(T, time_df, abund_df) {
 
 #' Compute the biggest SmaxN for all the possible path of a given timestep
 #'
-#' This function computes 
+#' This function computes all the paths beggining with a given timestep of the
+#' first camera and return the highest SmaxN found on those path.
 #' 
 #' 
 #' @param T a numerical value referring to the number of the row of the 
 #' abundance dataframe studied (timestep)
-#'
-#' @param time_df a numerical dataframe containing the minimal time 
-#'  needed for an individual of the studied species to go from a camera to 
-#'  another camera.There are as many rows as there are cameras and there are
-#'  as many columns as there are cameras, thus the dataframe is symmetrical
-#'  and the diagonal is filled with 0. This dataframe is the output of the 
-#'  \code{compute.cam.time} function.
-#'  
-#' @param abund_df a numerical dataframe containing the abundance of a 
-#' given species across continuous time for several cameras. The columns refer
-#' to the cameras and the rows refers to the time. \strong{Time must be given
-#' in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
-#' in the same order in the abund_df and the time_df!}. 
 #' 
-#' @return the abundance dataframe with NA on all cells except in the frame of 
-#' possible around the studied timestep T.
+#' @param frame_possible_df a dataframe which represents the frame of possible for
+#' the studied timestep. Computed using the \code{frame.possible} function.
+#' 
+#' @param n a numerical value refering to the studied camera on which the
+#' function searches new values
+#' 
+#' @param path_df a dataframe with value/camera_name/timestep information of 
+#' cells already on the path
+#' 
+#' @param SmaxN_small_UI a numeric value refering to the highest pseudo SmaxN
+#' found on the lowest intervals.
+#' 
+#' @return the highest SmaxN value found on all the possble path given the 
+#' studied timestep and the frame of possible.
 #' 
 #' 
 #' @examples 
@@ -361,5 +361,189 @@ frame.possible <- function(T, time_df, abund_df) {
 #' 
 #' abund_df <- abund_df[, as.vector(unlist(cam_order))]
 #' 
-#' 
-#' 
+
+
+recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI) {
+  
+  
+  # save the frame_possible df so can rewrite values when set to NA:
+  saved_frame_possible_df <- frame_possible_df
+  
+  # get the partial sum pS which is the sum of the values alreday on the path:
+  path_df$values <- as.numeric(path_df$values)
+  pS <- sum(path_df$values)
+  
+  
+  #### STILL SOME POSSIBLE CELLS FOR CAM N
+  
+  # while there are still some possible cells in the frame of possible for the camera n:
+  while(length(frame_possible_df[which(! is.na(frame_possible_df[, n])), n]) > 0) {
+    
+    
+    
+    # if the camera is the last one, chose the maximal possible value:
+    if (n == ncol(frame_possible_df)) {
+      
+      # check which cells are really possible given the path:
+      cells_coord <- as.data.frame(matrix(ncol = 3, 
+                                          nrow = length(frame_possible_df[which(! is.na(frame_possible_df[, n])), n])))
+      colnames(cells_coord) <- c("values", "cam_nm", "timestep")
+      cells_coord$cam_nm <- rep(colnames(frame_possible_df)[n], nrow(cells_coord))
+      cells_coord$timestep <- rownames(frame_possible_df[which(! is.na(frame_possible_df[, n])), ])
+      cells_coord$values <- frame_possible_df[which(! is.na(frame_possible_df[, n])), n]
+      
+      
+      # check if cell is really possible given the path so far:
+      possible_cell <- next.possible(max_bloc = path_df, 
+                                     next_possible = cells_coord, 
+                                     time_df)
+      
+      # reduce the cells_coord to the possible only (there is at least one possible cell):
+      cells_coord_poss <- possible_cell[which(possible_cell$possible == TRUE), ]
+      cells_coord_poss <- cells_coord_poss[, -ncol(cells_coord_poss)]
+      
+      
+      value <- max(cells_coord_poss$values)
+      S <- pS + value
+      
+      # for the while loop to end, add NA in every cell of the frame of possible
+      # ... for the studied cam:
+      frame_possible_df[which(! is.na(frame_possible_df[, n])), n] <- NA
+      
+      # add the value to the path:
+      path_df$value[n, ] <- value
+      path_df$cam_nm[n, ] <- colnames(frame_possible)[n]
+      path_df$timestep[n, ] <- rownames(cells_coord_poss[which(cells_coord_poss$values == value), ])[1]
+      path_df$timestep <- as.numeric(path_df$timestep)
+      
+    } # end if the camera is the last one
+    
+    
+    # if the camera is not the last one, check all paths:
+    if (n > ncol(frame_possible_df)) {
+    
+      # get coord of the first cell in the frame of possible:
+      cells_coord <- as.data.frame(matrix(ncol = 3, 
+                                          nrow = 1))
+      colnames(cells_coord) <- c("values", "cam_nm", "timestep")
+      cells_coord$cam_nm <- colnames(frame_possible_df)[n]
+      cells_coord$timestep <- rownames(frame_possible_df[which(! is.na(frame_possible_df[, n])), ])[1]
+      cells_coord$values <- frame_possible_df[which(! is.na(frame_possible_df[, n])), n][1]
+      
+      
+      # check if cell is really possible given the path so far:
+      possible_cell <- next.possible(max_bloc = path_df, 
+                                     next_possible = cells_coord, 
+                                     time_df)
+      
+      # reduce the cells_coord to the possible only (there is at least one possible cell):
+      cells_coord_poss <- possible_cell[which(possible_cell$possible == TRUE), ]
+      cells_coord_poss <- cells_coord_poss[, -ncol(cells_coord_poss)]
+      
+      
+      # if the cell is not possible given the path:
+      if (possible_cell$possible == FALSE) {
+        
+        # the cell becomes NA:
+        cam_nm <- possible_cell$cam_nm
+        timestep <- possible_cell$timestep
+        frame_possible_df[timestep, cam_nm] <- NA
+        
+      } # end if the cell is not possible given the path
+      
+      
+     # if the cell is possible given the path:
+      if (possible_cell$possible == TRUE) {
+        
+        # Compute the sum to compare with SmaxN_small_UI:
+        pS <- sum(path_df$values)
+        S <- pS + possible_cell$values
+        
+        
+        # if S > SmaxN_small_UI, change SmaxN_small and ok can take the cell in the path:
+        if (S >= SmaxN_small_UI) {
+          
+          SmaxN_small_UI <- S
+          
+          # add the cell to the path:
+          path_df$value[n, ] <-  possible_cell$values
+          path_df$cam_nm[n, ] <- colnames(frame_possible)[n]
+          path_df$timestep[n, ] <- rownames(cells_coord_poss[which(cells_coord_poss$values == value), ])[1]
+          path_df$timestep <- as.numeric(path_df$timestep)
+          
+          # call the recursive fct for (n+1):
+          SmaxN_Small_UI <- recursive.paths(T = path_df$timestep[n, ], 
+                                            frame_possible_df, 
+                                            n + 1, 
+                                            path_df, 
+                                            SmaxN_small_UI)
+          
+          # this cell on n become already tested:
+          frame_possible_df[rownames(cells_coord_poss[which(cells_coord_poss$values == value), ])[1], 
+                            colnames(frame_possible)[n]] <- NA
+          
+          
+        } # end if S > SmaxN_small_UI
+        
+        
+        # if S < SmaxN_small_UI, abort mission: cell cam n becomes NA 
+        # ... and give back the values of cam (n+1):
+        if (S < SmaxN_small_UI) {
+          
+          # this cell on n become already tested:
+          frame_possible_df[rownames(cells_coord_poss[which(cells_coord_poss$values == value), ])[1], 
+                            colnames(frame_possible)[n]] <- NA
+          
+          # give back the values for cam (n+1) until nb_cam (n+1, n+2, n+3 ...):
+          for (k in (n:ncol(frame_possible_df))) {
+            frame_possible_df[, k] <- saved_frame_possible_df[, k]
+          }
+          
+          
+        } # end if S > SmaxN_small_UI
+      }
+      
+   } # end if not the last camera
+    
+
+  } # end while there are still some possible cells for the camera n
+  
+  
+  
+  #### NO MORE POSSIBLE CELLS FOR CAM N:
+  
+  if (length(frame_possible_df[which(! is.na(frame_possible_df[, n])), n]) == 0) {
+    
+    
+    # if we study the camera 2 (the timestep has been finished to be studied):
+    if (n == 2) {
+      
+      return("SmaxN_timestep"= SmaxN)
+
+    } # end if we study cam2
+    
+    
+    # if we don't study cam2:
+    if (n > 2) {
+      
+      # the cell from cam (n-1) becomes NA
+      cam_nm <- path_df$cam_nm[(n-1)]
+      timestep <- path_df$timestep[(n-1)]
+      frame_possible_df[timestep, cam_nm] <- NA
+      
+      # give back the values for the cells cam n:
+      frame_possible_df[, n] <- saved_frame_possible_df[, n]
+      
+      # update path and remove n and n - 1 cam:
+      path_df <- path_df[- c(n, n-1), ]
+      
+      # and then get interested about n - 1 cam:
+      n <- n - 1
+      
+    } # end if we don't study cam2
+  
+  
+  } # end if no more possible cells for cam n
+  
+
+}
