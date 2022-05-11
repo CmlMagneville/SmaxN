@@ -32,8 +32,8 @@ first camera and return the highest SmaxN found on those path.
 }
 \examples{
 
-abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), "B" = c(0,4,2,2,1,3,3), 
-"C" = c(0,0,0,0,1,1,1), "D" = c(1,0,0,0,3,3,3))
+abund_df <- data.frame("A" = c(3,8,3,3,3,3,3), "B" = c(0,4,2,2,1,8,3), 
+"C" = c(0,0,0,9,1,1,1), "D" = c(1,0,0,0,3,3,3))
 
 time_df <- data.frame("A" = c(0,4,4,3), "B" = c(4,0,2,2), 
                       "C" = c(4,2,0,2), "D" = c(3,2,2,0))
@@ -42,5 +42,16 @@ rownames(time_df) <- c("A", "B", "C", "D")
 cam_order <- cam.order(time_df)
 
 abund_df <- abund_df[, as.vector(unlist(cam_order))]
+
+frame_possible_df <- frame.possible(T = 4, time_df, abund_df)
+
+n <- 4
+
+path_df <- data.frame("value" = c(0, 4, 0), 
+                      "cam_nm" = c("D", "B", "C"), 
+                      "timestep" =  c(4, 2, 2))
+path_df[4, ] <- rep(NA, 3)
+                      
+SmaxN_small_UI <- 10
 
 }
