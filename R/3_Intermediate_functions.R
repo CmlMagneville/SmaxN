@@ -348,6 +348,13 @@ frame.possible <- function(T, time_df, abund_df) {
 #' 
 #' @param SmaxN_small_UI a numeric value refering to the highest pseudo SmaxN
 #' found on the lowest intervals.
+#'
+#' @param time_df a numerical dataframe containing the minimal time 
+#'  needed for an individual of the studied species to go from a camera to 
+#'  another camera.There are as many rows as there are cameras and there are
+#'  as many columns as there are cameras, thus the dataframe is symmetrical
+#'  and the diagonal is filled with 0. This dataframe is the output of the 
+#'  \code{compute.cam.time} function
 #' 
 #' @return the highest SmaxN value found on all the possble path given the 
 #' studied timestep and the frame of possible.
@@ -378,11 +385,12 @@ frame.possible <- function(T, time_df, abund_df) {
 #'                       
 #' SmaxN_small_UI <- 10
 #' 
-#' SmaxN <- recursive.paths(T = 4, frame_possible_df, n, path_df, SmaxN_small_UI) 
+#' SmaxN <- recursive.paths(T = 4, frame_possible_df, n, path_df, SmaxN_small_UI,
+#' time_df) 
 #' 
 
 
-recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI) {
+recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, time_df) {
   
   
   print(paste0("n = ", sep = "", n))
@@ -434,7 +442,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI) {
         print(paste0("Cells_coord_poss = ", sep = "", cells_coord_poss))
         
         pS <- sum(path_df$value, na.rm = TRUE)
-        value <- max(possible_cell$values)
+        value <- max(cells_coord_poss$values)
         S <- pS + value
         print(paste0("S value = ", sep ="", S))
         print(paste0("pS = ", sep ="", pS))
@@ -458,6 +466,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI) {
         # if S > SmaxN_small_UI, replace:
         if (S > SmaxN_small_UI) {
           SmaxN_small_UI <- S
+          path_saved <- 0
+          path_saved <- path_df
         }
         print(paste0("path so far is = ", sep = "", path_df))
         print(paste0("SmaxN_small_UI =", sep = "", SmaxN_small_UI))
@@ -618,6 +628,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI) {
     
   } # end while n > 1
   
-  return("SmaxN_timestep"= SmaxN_small_UI)
+  return(list("SmaxN_timestep"= SmaxN_small_UI,
+         "one_path" = path_saved))
 
 }

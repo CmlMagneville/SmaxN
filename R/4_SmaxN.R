@@ -55,7 +55,7 @@
 #'  rownames(dist_df_ex) <- c("A", "B", "C", "D")
 #'  # Build distance dataframe for the example:
 #'  abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3, 0, 6, 2, 0, 1), 
-#'                            "B" = c(2, 2, 2, 2, 0, 0, 0, 0, 1, 2, 1, 0), 
+#'                            "B" = c(2, 2, 2, 2, 0, 0, 0, 0, 8, 2, 1, 0), 
 #'                            "C" = c(2, 0, 1, 0, 0, 4, 2, 2, 3, 0, 0, 4), 
 #'                            "D" = c(0, 1, 0, 1, 0, 6, 1, 1, 6, 4, 2, 1))
 #'  
@@ -90,15 +90,18 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
   
   #### Parallelisation def
   
+  if (paral.option == TRUE) {
+    
+    # returns the number of available hardware threads:
+    nb_cores <- parallel::detectCores(logical = TRUE) 
+    
+    #  allocate this number of available cores to R and register:
+    cl <- parallel::makeCluster(nb_cores - 1)  
+    doParallel::registerDoParallel(cl) 
+    
+  }
   
-  # returns the number of available hardware threads:
-  nb_cores <- parallel::detectCores(logical = TRUE) 
-  
-  #  allocate this number of available cores to R and register:
-  cl <- parallel::makeCluster(nb_cores - 1)  
-  doParallel::registerDoParallel(cl) 
-  
-  
+ 
   #### Begin the SmaxN serach
   
   ### Checks if no easy solution (SmaxN_small_UI):
@@ -211,7 +214,10 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
       
       
       # create a list that will contain the SmaxN of each big UI:
-      SmaxN_vect <- c()
+      SmaxN_vect <- c(max_small)
+      
+      # create an object that contain one path to have the SmaxN:
+      path_saved <- 0
       
       b <- 1
       
@@ -256,80 +262,90 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
         # then stop the process for this timestep
         if (first_cell_df2$possible == FALSE) {
           b <- b + 1
-          break
         }
         
         
         #### Create the path df:
         
-        
-        # create the path_df:
-        path_df <-  as.data.frame(matrix(ncol = 3, nrow = ncol(abund_df)))
-        colnames(path_df) <- c("value", "cam_nm", "timestep")
-        
-        # add the first cam:
-        path_df[1, ] <- c(first_cell_df2$values, 
-                          first_cell_df2$cam_nm,
-                          first_cell_df2$timestep)
-        
-        
-        #### Search the first path to work on 
-        # NOTE: not the one with the highest values
-        # possible on each camera so we can get rid of a lot of other rows
-        # thereafter: because algorithm takes too long to find! As first vers...:
-        
-        # Thus chose the row of the timestep:
-        for (j in (2:nrow(path_df))) {
+        if (first_cell_df2$possible == TRUE) {
           
-          cam_nm <- colnames(frame_possible_df)[j]
-          timestep <- first_cell_df2$timestep
-          value <- frame_possible_df[timestep, cam_nm]
+          # create the path_df:
+          path_df <-  as.data.frame(matrix(ncol = 3, nrow = ncol(abund_df)))
+          colnames(path_df) <- c("value", "cam_nm", "timestep")
           
-          # complete the path_df
-          path_df[j, ] <- c(value, cam_nm, timestep)
+          # add the first cam:
+          path_df[1, ] <- c(first_cell_df2$values, 
+                            first_cell_df2$cam_nm,
+                            first_cell_df2$timestep)
           
-        }
-        
-        # Compute the sum for this first path and compare to SmaxN_small_UI:
-        path_df$value <- as.numeric(path_df$value)
-        S <- sum(path_df$value)
-        
-        if (S > max_small) {
-          max_small <- S
-        }
-        
-        # remove the last camera of the path,thus initialising the
-        # recursive fct and running backward:
-        path_df[nrow(path_df), ] <- rep(NA, 3)
-        
-        #### Compute all possible paths and keep in mind the highest SmaxN:
-        # try without parallelisation
-        
-        # compute the SmaxN of the big interval of the given timestep:
-        T <- rownames(frame_possible_df[!is.na(frame_possible_df[, 1]), ])
-        T <- as.numeric(T)
           
-        v <- recursive.paths(T = T, 
-                      frame_possible_df, 
-                      n = ncol(frame_possible_df), 
-                      path_df = path_df, 
-                      SmaxN_small_UI)
-        
-        # add the SmaxN of the given timestep to the SmaxN vect:
-        SmaxN_vect <- append(SmaxN_vect, v)
-        
-        # Remove timesteps not to study ie the one with big_UI SmaxN < the SmaxN we just computed:
-        # but as if I remove timesteps the loop will have problems:
-        # 
-        clean_big_SmaxN_df <- order_big_SmaxN_df[which(! order_big_SmaxN_df$SmaxN < v), ]
-        
-        # order the rows by decreasing order so that study intervals with the ...
-        # ... biggest SmaxN first:
-        order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
-        
-        b <- b + 1
-        
+          #### Search the first path to work on 
+          # NOTE: not the one with the highest values
+          # possible on each camera so we can get rid of a lot of other rows
+          # thereafter: because algorithm takes too long to find! As first vers...:
+          
+          # Thus chose the row of the timestep:
+          for (j in (2:nrow(path_df))) {
+            
+            cam_nm <- colnames(frame_possible_df)[j]
+            timestep <- first_cell_df2$timestep
+            value <- frame_possible_df[timestep, cam_nm]
+            
+            # complete the path_df
+            path_df[j, ] <- c(value, cam_nm, timestep)
+            
+          }
+          
+          # Compute the sum for this first path and compare to SmaxN_small_UI:
+          path_df$value <- as.numeric(path_df$value)
+          S <- sum(path_df$value)
+          
+          if (S > max_small) {
+            max_small <- S
+          }
+          
+          # remove the last camera of the path,thus initialising the
+          # recursive fct and running backward:
+          path_df[nrow(path_df), ] <- rep(NA, 3)
+          
+          #### Compute all possible paths and keep in mind the highest SmaxN:
+          # try without parallelisation
+          
+          # compute the SmaxN of the big interval of the given timestep:
+          T <- rownames(frame_possible_df[!is.na(frame_possible_df[, 1]), ])
+          T <- as.numeric(T)
+          
+          print("Starting recursive ")
+          
+          value <- recursive.paths(T = T, 
+                               frame_possible_df, 
+                               n = ncol(frame_possible_df), 
+                               path_df = path_df, 
+                               SmaxN_small_UI = max_small,
+                               time_df)
+          v <- value$"SmaxN_timestep"
+          
+          print("Ending recursive ")
+          
+          # add the SmaxN of the given timestep to the SmaxN vect:
+          SmaxN_vect <- append(SmaxN_vect, v)
+          path_saved <- value$"one_path"
+          
+          # Remove timesteps not to study ie the one with big_UI SmaxN < the SmaxN we just computed:
+          # but as if I remove timesteps the loop will have problems:
+          # 
+          clean_big_SmaxN_df <- order_big_SmaxN_df[which(! order_big_SmaxN_df$SmaxN < v), ]
+          
+          # order the rows by decreasing order so that study intervals with the ...
+          # ... biggest SmaxN first:
+          order_big_SmaxN_df <- dplyr::arrange(clean_big_SmaxN_df, desc(SmaxN))
+          
+          b <- b + 1
+          
+        } # end if first cell possibly leads to a "good" SmaxN
+
       } # end while
+      
       
       # Compute the general SmaxN:
       SmaxN <- max(SmaxN_vect)
@@ -344,11 +360,14 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
       
       
       # return:
-      return_list <- list(maxN = maxN, 
-                          SmaxN = SmaxN,
-                          SmaxN_timestep = SmaxN_timestep,
-                          maxN_cam = maxN_cam,
-                          maxN_timestep = maxN_timestep)
+      return_list <- list("maxN" = maxN, 
+                          "SmaxN" = SmaxN,
+                          "path_saved" = path_saved,
+                          "SmaxN_timestep" = SmaxN_timestep,
+                          "maxN_cam" = maxN_cam,
+                          "maxN_timestep" = maxN_timestep)
+      
+      return(return_list)
   
     } # if there is a fish speed
     
@@ -365,11 +384,12 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
       
       
       # return:
-      return_list <- list(maxN = maxN, 
-                          SmaxN_timestep = SmaxN_timestep,
-                          maxN_cam = maxN_cam,
-                          maxN_timestep = maxN_timestep)
+      return_list <- list("maxN" = maxN, 
+                          "SmaxN_timestep" = SmaxN_timestep,
+                          "maxN_cam" = maxN_cam,
+                          "maxN_timestep" = maxN_timestep)
       
+      return(return_list)
       
     } # end if fish speed is not taken into account
 
@@ -381,7 +401,7 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
   if (ncol(dist_df) == 1) {
     print("SmaxN package has been computed for cases where more than one camera
           is used.")
-    return(list(maxN  = max(abund_df)))
+    return(list("maxN"  = max(abund_df)))
   }  # if there is only one camera
   
   
