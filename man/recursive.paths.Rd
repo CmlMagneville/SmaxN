@@ -54,4 +54,6 @@ path_df[4, ] <- rep(NA, 3)
                       
 SmaxN_small_UI <- 10
 
+SmaxN <- recursive.paths(T = 4, frame_possible_df, n, path_df, SmaxN_small_UI) 
+
 }

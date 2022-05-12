@@ -3,7 +3,7 @@
 ## 3_Intermediate_functions.R
 ##
 ## This script gathers three functions used in the global SmaxN function 
-## (script 4): 
+## (script 5): 
 ## - one computing the order in which cameras should be classified,
 ## - one computing the frame of possible for a given timestep and a recursive
 ## - one computing all the possible paths given a timestep and the frame of 
@@ -256,19 +256,24 @@ frame.possible <- function(T, time_df, abund_df) {
       
       # compute all the possible distances between cameras already updated ...
       # ... on the frame of possible and the studied camera:
-      values <- c()
+      # values <- c()
+      # 
+      # # loop on camera already ok:
+      # for (j in (1:length(cam_ok))) {
+      #   cam_done <- cam_ok[j]
+      #   span <- time_df[cam_done, colnames(abund_df)[i]]
+      #   values <- append(values, span)
+      # } # end loop to get distances btw studied cam i and cam already ok
+      # 
+      # # get the span value which is:
+      # # min( min(dist_cam_i_all_cam_ok) , min(dist_cam_i_cam1))
+      # # = min(values):
+      # span <- min(values)
+      # span_start <- T - span
+      # span_end <- T + span
       
-      # loop on camera already ok:
-      for (j in (1:length(cam_ok))) {
-        cam_done <- cam_ok[j]
-        span <- time_df[cam_done, colnames(abund_df)[i]]
-        values <- append(values, span)
-      } # end loop to get distances btw studied cam i and cam already ok
-      
-      # get the span value which is:
-      # min( min(dist_cam_i_all_cam_ok) , min(dist_cam_i_cam1))
-      # = min(values):
-      span <- min(values)
+      # the span is equal to the distance to the first camera:
+      span <- time_df[cam1, colnames(abund_df)[i]]
       span_start <- T - span
       span_end <- T + span
       
@@ -294,18 +299,18 @@ frame.possible <- function(T, time_df, abund_df) {
     
     if (span_start == 1 & span_end < nrow(abund_df)) {
       rownames(abund_df) <- as.numeric(rownames(abund_df))
-      abund_df[which(rownames(abund_df) > span_end), i] <- NA
+      abund_df[which(as.numeric(rownames(abund_df)) > span_end), i] <- NA
     }
     
     if (span_start > 1 & span_end == nrow(abund_df)) {
       rownames(abund_df) <- as.numeric(rownames(abund_df))
-      abund_df[which(rownames(abund_df) < span_start), i] <- NA
+      abund_df[which(as.numeric(rownames(abund_df)) < span_start), i] <- NA
     }
     
     if (span_start > 1 & span_end < nrow(abund_df)) {
       rownames(abund_df) <- as.numeric(rownames(abund_df))
-      abund_df[which(rownames(abund_df) > span_end), i] <- NA
-      abund_df[which(rownames(abund_df) < span_start), i] <- NA
+      abund_df[which(as.numeric(rownames(abund_df)) > span_end), i] <- NA
+      abund_df[which(as.numeric(rownames(abund_df)) < span_start), i] <- NA
     }
 
     cam_ok <- append(cam_ok, colnames(abund_df)[i])
@@ -347,6 +352,7 @@ frame.possible <- function(T, time_df, abund_df) {
 #' @return the highest SmaxN value found on all the possble path given the 
 #' studied timestep and the frame of possible.
 #' 
+#' @export
 #' 
 #' @examples 
 #' 
@@ -371,6 +377,8 @@ frame.possible <- function(T, time_df, abund_df) {
 #' path_df[4, ] <- rep(NA, 3)
 #'                       
 #' SmaxN_small_UI <- 10
+#' 
+#' SmaxN <- recursive.paths(T = 4, frame_possible_df, n, path_df, SmaxN_small_UI) 
 #' 
 
 
@@ -426,6 +434,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI) {
         print(paste0("Cells_coord_poss = ", sep = "", cells_coord_poss))
         
         pS <- sum(path_df$value, na.rm = TRUE)
+        value <- max(possible_cell$values)
         S <- pS + value
         print(paste0("S value = ", sep ="", S))
         print(paste0("pS = ", sep ="", pS))
