@@ -16,25 +16,19 @@
     <loc>/reference/SmaxN-package.html</loc>
   </url>
   <url>
-    <loc>/reference/compute.SmaxN.bigUI.html</loc>
+    <loc>/reference/SmaxN.computation.html</loc>
   </url>
   <url>
-    <loc>/reference/compute.SmaxN.bigUI2.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compute.SmaxN.timestep.html</loc>
-  </url>
-  <url>
-    <loc>/reference/compute.cam.order.html</loc>
+    <loc>/reference/cam.order.html</loc>
   </url>
   <url>
     <loc>/reference/compute.cam.time.html</loc>
   </url>
   <url>
-    <loc>/reference/compute.max.abund.html</loc>
+    <loc>/reference/first.cam.possible.html</loc>
   </url>
   <url>
-    <loc>/reference/first.cam.possible.html</loc>
+    <loc>/reference/frame.possible.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
@@ -43,6 +37,9 @@
     <loc>/reference/next.possible.html</loc>
   </url>
   <url>
-    <loc>/reference/search.next.value.html</loc>
+    <loc>/reference/pseudoSmaxN.timestep.html</loc>
+  </url>
+  <url>
+    <loc>/reference/recursive.paths.html</loc>
   </url>
 </urlset>
