@@ -4,7 +4,7 @@
 \alias{recursive.paths}
 \title{Compute the biggest SmaxN for all the possible path of a given timestep}
 \usage{
-recursive.paths(T, frame_possible_df, n, path_df, SmaxN_small_UI)
+recursive.paths(T, frame_possible_df, n, path_df, SmaxN_small_UI, time_df)
 }
 \arguments{
 \item{T}{a numerical value referring to the number of the row of the 
@@ -21,6 +21,13 @@ cells already on the path}
 
 \item{SmaxN_small_UI}{a numeric value refering to the highest pseudo SmaxN
 found on the lowest intervals.}
+
+\item{time_df}{a numerical dataframe containing the minimal time 
+needed for an individual of the studied species to go from a camera to 
+another camera.There are as many rows as there are cameras and there are
+as many columns as there are cameras, thus the dataframe is symmetrical
+and the diagonal is filled with 0. This dataframe is the output of the 
+\code{compute.cam.time} function}
 }
 \value{
 the highest SmaxN value found on all the possble path given the 
@@ -54,6 +61,7 @@ path_df[4, ] <- rep(NA, 3)
                       
 SmaxN_small_UI <- 10
 
-SmaxN <- recursive.paths(T = 4, frame_possible_df, n, path_df, SmaxN_small_UI) 
+SmaxN <- recursive.paths(T = 4, frame_possible_df, n, path_df, SmaxN_small_UI,
+time_df) 
 
 }
