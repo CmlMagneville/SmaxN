@@ -46,7 +46,7 @@ first camera and return the highest SmaxN found on those path.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">recursive.paths</span><span class="op">(</span><span class="cn">T</span>, <span class="va">frame_possible_df</span>, <span class="va">n</span>, <span class="va">path_df</span>, <span class="va">SmaxN_small_UI</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">recursive.paths</span><span class="op">(</span><span class="cn">T</span>, <span class="va">frame_possible_df</span>, <span class="va">n</span>, <span class="va">path_df</span>, <span class="va">SmaxN_small_UI</span>, <span class="va">time_df</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -66,6 +66,13 @@ cells already on the path</p></dd>
 <dt>SmaxN_small_UI</dt>
 <dd><p>a numeric value refering to the highest pseudo SmaxN
 found on the lowest intervals.</p></dd>
+<dt>time_df</dt>
+<dd><p>a numerical dataframe containing the minimal time 
+needed for an individual of the studied species to go from a camera to 
+another camera.There are as many rows as there are cameras and there are
+as many columns as there are cameras, thus the dataframe is symmetrical
+and the diagonal is filled with 0. This dataframe is the output of the 
+<code>compute.cam.time</code> function</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -98,11 +105,219 @@ studied timestep and the frame of possible.</p>
 <span class="r-in">                      </span>
 <span class="r-in"><span class="va">SmaxN_small_UI</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="va">SmaxN</span> <span class="op">&lt;-</span> <span class="fu">recursive.paths</span><span class="op">(</span>T <span class="op">=</span> <span class="fl">4</span>, <span class="va">frame_possible_df</span>, <span class="va">n</span>, <span class="va">path_df</span>, <span class="va">SmaxN_small_UI</span><span class="op">)</span> </span>
+<span class="r-in"><span class="va">SmaxN</span> <span class="op">&lt;-</span> <span class="fu">recursive.paths</span><span class="op">(</span>T <span class="op">=</span> <span class="fl">4</span>, <span class="va">frame_possible_df</span>, <span class="va">n</span>, <span class="va">path_df</span>, <span class="va">SmaxN_small_UI</span>,</span>
+<span class="r-in"><span class="va">time_df</span><span class="op">)</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 4"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 4"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 4"</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in next.possible(max_bloc = path_df, next_possible = cells_coord,     time_df):</span> object 'time_df' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Cells_coord_poss = c(3, 8, 3, 3, 3, 3)"                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "Cells_coord_poss = c(\"A\", \"A\", \"A\", \"A\", \"A\", \"A\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "Cells_coord_poss = c(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S value = 12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pS = 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "value = 8"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "path so far is = c(0, 4, 0, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "path so far is = c(\"D\", \"B\", \"C\", NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "path so far is = c(4, 2, 2, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "path so far is = c(0, 4, 0, 8)"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "path so far is = c(\"D\", \"B\", \"C\", \"A\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "path so far is = c(4, 2, 2, 2)"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SmaxN_small_UI =12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No more possible cells for cam 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, 4, 2, 2, 1, 8, NA)"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, 0, 9, 1, 1, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, 4, 2, 2, 1, 8, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, 0, 9, 1, 1, NA)"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(3, 8, 3, 3, 3, 3, 3)"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path df =  c(0, 4, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The path df =  c(\"D\", \"B\", NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path df =  c(4, 2, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =0"    "The studied cell is =C"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =3"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &lt;= SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =9"    "The studied cell is =C"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =4"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &gt; SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Begin the recursive fct for n + 1 cam"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame of possible before is =c(NA, NA, NA, 0, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame of possible before is =c(NA, 4, 2, 2, 1, 8, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame of possible before is =c(NA, NA, NA, 9, 1, 1, NA)"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame of possible before is =c(3, 8, 3, 3, 3, 3, 3)"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame of possible after is =c(NA, NA, NA, 0, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame of possible after is =c(NA, 4, 2, 2, 1, 8, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame of possible after is =c(NA, NA, NA, NA, 1, 1, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame of possible after is =c(3, 8, 3, 3, 3, 3, 3)"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path so far is c(0, 4, 9, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The path so far is c(\"D\", \"B\", \"C\", NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path so far is c(4, 2, 4, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Cells_coord_poss = c(3, 8, 3, 3, 3, 3)"                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "Cells_coord_poss = c(\"A\", \"A\", \"A\", \"A\", \"A\", \"A\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "Cells_coord_poss = c(\"1\", \"2\", \"3\", \"4\", \"5\", \"6\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S value = 21"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pS = 13"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "value = 8"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "path so far is = c(0, 4, 9, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "path so far is = c(\"D\", \"B\", \"C\", NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "path so far is = c(4, 2, 4, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "path so far is = c(0, 4, 9, 8)"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "path so far is = c(\"D\", \"B\", \"C\", \"A\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "path so far is = c(4, 2, 4, 2)"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SmaxN_small_UI =21"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No more possible cells for cam 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, 4, 2, 2, 1, 8, NA)"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, NA, NA, 1, 1, NA)"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, 4, 2, 2, 1, 8, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, NA, NA, 1, 1, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(3, 8, 3, 3, 3, 3, 3)"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path df =  c(0, 4, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The path df =  c(\"D\", \"B\", NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path df =  c(4, 2, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =1"     "The studied cell is =C"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =5"     "The studied cell is =FALSE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FALSE - The frame of possible so far is =c(NA, NA, NA, 0, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "FALSE - The frame of possible so far is =c(NA, 4, 2, 2, 1, 8, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "FALSE - The frame of possible so far is =c(NA, NA, NA, NA, NA, 1, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "FALSE - The frame of possible so far is =c(3, 8, 3, 3, 3, 3, 3)"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =1"     "The studied cell is =C"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =6"     "The studied cell is =FALSE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FALSE - The frame of possible so far is =c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "FALSE - The frame of possible so far is =c(NA, 4, 2, 2, 1, 8, NA)"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "FALSE - The frame of possible so far is =c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "FALSE - The frame of possible so far is =c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No more possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, NA, 2, 2, 1, 8, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, NA, 2, 2, 1, 8, NA)"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, 0, 0, 9, 1, 1, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(3, 8, 3, 3, 3, 3, 3)"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path df =  c(0, NA, NA, NA)"     "The path df =  c(\"D\", NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path df =  c(4, NA, NA, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =2"    "The studied cell is =B"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =3"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &lt;= SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =2"    "The studied cell is =B"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =4"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &lt;= SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =1"    "The studied cell is =B"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =5"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &lt;= SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =8"    "The studied cell is =B"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =6"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &gt; SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Begin the recursive fct for n + 1 cam"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame of possible before is =c(NA, NA, NA, 0, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame of possible before is =c(NA, NA, NA, NA, NA, 8, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame of possible before is =c(NA, 0, 0, 9, 1, 1, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame of possible before is =c(3, 8, 3, 3, 3, 3, 3)"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame of possible after is =c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame of possible after is =c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame of possible after is =c(NA, 0, 0, 9, 1, 1, NA)"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame of possible after is =c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path so far is c(0, 8, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The path so far is c(\"D\", \"B\", NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path so far is c(4, 6, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =0"     "The studied cell is =C"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =2"     "The studied cell is =FALSE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FALSE - The frame of possible so far is =c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "FALSE - The frame of possible so far is =c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "FALSE - The frame of possible so far is =c(NA, NA, 0, 9, 1, 1, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "FALSE - The frame of possible so far is =c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =0"     "The studied cell is =C"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =3"     "The studied cell is =FALSE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FALSE - The frame of possible so far is =c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "FALSE - The frame of possible so far is =c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "FALSE - The frame of possible so far is =c(NA, NA, NA, 9, 1, 1, NA)"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "FALSE - The frame of possible so far is =c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =9"    "The studied cell is =C"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =4"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &gt; SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Begin the recursive fct for n + 1 cam"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame of possible before is =c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame of possible before is =c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame of possible before is =c(NA, NA, NA, 9, 1, 1, NA)"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame of possible before is =c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame of possible after is =c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame of possible after is =c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame of possible after is =c(NA, NA, NA, NA, 1, 1, NA)"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame of possible after is =c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path so far is c(0, 8, 9, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The path so far is c(\"D\", \"B\", \"C\", NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path so far is c(4, 6, 4, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Cells_coord_poss = c(8, 3, 3, 3, 3, 3)"                        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "Cells_coord_poss = c(\"A\", \"A\", \"A\", \"A\", \"A\", \"A\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "Cells_coord_poss = c(\"2\", \"3\", \"4\", \"5\", \"6\", \"7\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S value = 25"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "pS = 17"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "value = 8"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "path so far is = c(0, 8, 9, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "path so far is = c(\"D\", \"B\", \"C\", NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "path so far is = c(4, 6, 4, NA)"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "path so far is = c(0, 8, 9, 8)"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "path so far is = c(\"D\", \"B\", \"C\", \"A\")"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "path so far is = c(4, 6, 4, 2)"                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SmaxN_small_UI =25"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No more possible cells for cam 4"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, NA, NA, 1, 1, NA)"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, NA, NA, 1, 1, NA)"  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path df =  c(0, 8, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The path df =  c(\"D\", \"B\", NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path df =  c(4, 6, NA, NA)"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =1"    "The studied cell is =C"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =5"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &lt;= SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Still some possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The studied cell is =1"    "The studied cell is =C"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The studied cell is =6"    "The studied cell is =TRUE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "S &lt;= SmaxN_small_UI"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No more possible cells for cam 3"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The frame possible df =  c(NA, NA, NA, 0, NA, NA, NA)" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "The frame possible df =  c(NA, NA, NA, NA, NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The frame possible df =  c(NA, 0, 0, 9, 1, 1, NA)"     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4] "The frame possible df =  c(3, 8, 3, 3, 3, 3, 3)"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "The path df =  c(0, NA, NA, NA)"     "The path df =  c(\"D\", NA, NA, NA)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "The path df =  c(4, NA, NA, NA)"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "n = 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "No more possible cells for cam 2"</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
