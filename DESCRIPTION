@@ -19,3 +19,6 @@ Imports:
     dplyr,
     rlist,
     tibble
+Suggests: 
+    doParallel,
+    parallel
