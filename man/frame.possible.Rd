@@ -4,7 +4,7 @@
 \alias{frame.possible}
 \title{Compute the frame of possible cells}
 \usage{
-frame.possible(T, time_df, abund_df)
+frame.possible(T, time_df, abund_df, trash_rows)
 }
 \arguments{
 \item{T}{a numerical value referring to the number of the row of the 
@@ -22,6 +22,8 @@ given species across continuous time for several cameras. The columns refer
 to the cameras and the rows refers to the time. \strong{Time must be given
 in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
 in the same order in the abund_df and the time_df!}.}
+
+\item{trash_rows}{a vector gathering the number of rows that should not be studied}
 }
 \value{
 the abundance dataframe with NA on all cells except in the frame of 

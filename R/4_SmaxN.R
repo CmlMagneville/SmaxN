@@ -120,16 +120,20 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
       # get the length of the small interval build the lowest time between ...
       # ... camera pairs:
       small_UI <- min(apply(time_df[, ], 1, function(x) min(x[x > 0])))
+      # idem with max:
+      big_UI <- max(time_df)
       
       ## create one df for the false "SmaxN" values for each timestep for the ...
       ## ... small_UI and big_UI:
       small_SmaxN_df <- as.data.frame(matrix(ncol = 2, nrow = 1))
       colnames(small_SmaxN_df) <- c("row", "SmaxN")
-      
+      big_SmaxN_df <- as.data.frame(matrix(ncol = 2, nrow = 1))
+      colnames(big_SmaxN_df) <- c("row", "SmaxN")
 
       ## for each timestep, compute the SmaxN on small_UI and keep in memory ...
       ## ... the SmaxN for each timestep:
-
+      ## idem for big_UI:
+      
       for (i in (1:nrow(abund_df))) {
         
         # compute the SmaxN for the timestep and the small span:
@@ -138,22 +142,103 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
                                         timestep = i,
                                         value = small_UI)
         
+        # compute the SmaxN for the timestep and the big span:
+        big <- pseudoSmaxN.timestep(time_df = time_df,
+                                    abund_df = abund_df,
+                                    timestep = i,
+                                    value = big_UI)
+        
         # add values in the small and big df:
         small_SmaxN_df <- dplyr::add_row(row = rownames(abund_df)[i], SmaxN = small, small_SmaxN_df)
+        big_SmaxN_df <- dplyr::add_row(row = rownames(abund_df)[i], SmaxN = big, big_SmaxN_df)
         
         small_SmaxN_df$SmaxN <- as.numeric(small_SmaxN_df$SmaxN)
+        big_SmaxN_df$SmaxN <- as.numeric(big_SmaxN_df$SmaxN)
 
       } # end computation of Smaxn for each timestep and small and big spans
       
       # remove first rows filled with Na and use numerical format:
       small_SmaxN_df <- small_SmaxN_df[-1, ]
+      big_SmaxN_df <- big_SmaxN_df[-1, ]
 
       # Compute the max of SmaxN of small spans for all timesteps:
       max_small <- max(small_SmaxN_df$SmaxN)
       
+      
+      
+      ## Remove timesteps not to study ie the one with big_UI SmaxN < max_small
+      # and the associated rows in the mask:
+      clean_big_SmaxN_df <- big_SmaxN_df[which(! big_SmaxN_df$SmaxN < max_small), ]
+      
+      # add the associated rows:
+      add_clean_big_df <- clean_big_SmaxN_df
+      row_base <- as.numeric(add_clean_big_df$row)
+      row_to_add <- c()
+      
+      for (j in (1:length(row_base))) {
+        
+        # create a vector containing all possible rows to add ...
+        # ... to reduce if needed thereafter if row_base + big_Ui > nrow(abund_df):
+        possible_rows <- c(row_base[j]:(row_base[j] + big_UI))
+        possible_rows <- possible_rows[which(possible_rows <= nrow(abund_df))]
+        
+        row_to_add <- append(row_to_add, possible_rows)
+                             
+      }
+      
+      # remove double rows:
+      row_to_add <- unique(row_to_add)
+      
+      # complete the df: 
+      for (j in row_to_add) {
+        
+        # if not already in the df:
+        if (! j %in% row_base) {
+          
+          add_clean_big_df$row <- as.numeric(add_clean_big_df$row)
+          add_clean_big_df <- dplyr::add_row(row = j, 
+                                             SmaxN = as.numeric(big_SmaxN_df$SmaxN[which(big_SmaxN_df$row == j)]), 
+                                             add_clean_big_df)
+          
+        }
+      }
+      
+      # now add_clean_big_df contains the timesteps to study, in which the general SmaxN is
+      
+      
+      # create a list which contains the list of timesteps not to study:
+      # ... help to reduce the frame of possibles:
+      trash_rows <- setdiff(rownames(abund_df), add_clean_big_df$row)
+      
+      
+      ## Check is the SmaxN is already known (if for one timestep: ...
+      # ... SmaxN big UI = SmaxN small UI = max (SmaxN big UI)):
+      max_big <- max(big_SmaxN_df$SmaxN) 
+      
+      # span on the two dfs:
+      for (k in small_SmaxN_df$row) {
+        for (m in big_SmaxN_df$row) {
+          
+          # if the same row:
+          if (k == m) {
+            
+            # if SmaxN is the same then stop, we have the SmaxN:
+            if ((small_SmaxN_df$SmaxN[as.numeric(k)] == big_SmaxN_df$SmaxN[as.numeric(m)])) {
+              if (small_SmaxN_df$SmaxN[as.numeric(k)] == max_big) {
+                print("SmaxN small UI = SmaxN big UI")
+                return("SmaxN" = small_SmaxN_df$SmaxN[which(small_SmaxN_df$row == k)])
+              }
+            }
+          }
+        }
+      }
+      
+      
+      
       # order the rows by decreasing order so that study intervals with the ...
       # ... biggest SmaxN first:
-      order_SmaxN_df <- dplyr::arrange(small_SmaxN_df, desc(SmaxN))
+      order_big_SmaxN_df <- dplyr::arrange(add_clean_big_df, desc(SmaxN))
+      order_SmaxN_df <- dplyr::arrange(order_big_SmaxN_df, desc(SmaxN))
       
       
     #### order the abundance df so cameras ok:
@@ -182,22 +267,25 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
         print(paste0("!!!!!! Starting row ",
                      sep = " ", b, sep = " ", "on", 
                      sep = " ", nrow(order_SmaxN_df)))
-        print(paste0((b/nrow(order_SmaxN_df))*100, sep = "", "%"))
+        print(paste0(round((b/nrow(order_SmaxN_df))*100, 2), sep = "", "%"))
         
         
         
         # compute the frame of possible around the studied timestep:
         frame_possible_df <- frame.possible(T = as.numeric(order_SmaxN_df$row[b]), 
-                                            time_df, abund_df)
+                                            time_df, abund_df, trash_rows)
         
         # reduce the frame_possible_df by deleting rows with all NAs:
         frame_possible_df <- frame_possible_df[rowSums(is.na(frame_possible_df)) != ncol(frame_possible_df), ]
-        
+
         # remove columns with only 0 (but not first camera if the cell = 0):
-        #diff_0 <- frame_possible_df[, colSums(frame_possible_df, na.rm = TRUE) != 0]
-        #frame_possible_df <- cbind(frame_possible_df[, 1], diff_0)
-        
-        
+        diff_0 <- colnames(frame_possible_df[, which(colSums(frame_possible_df, na.rm = TRUE) != 0)])
+        if (colnames(frame_possible_df)[1] %in% diff_0) {
+          frame_possible_df <- frame_possible_df[, diff_0]
+        }
+        if (! colnames(frame_possible_df)[1] %in% diff_0) {
+          frame_possible_df <- frame_possible_df[, c(colnames(frame_possible_df)[1], diff_0)]
+        }
 
         # check that with the first cell of this timestep we can have a "good"
         # SmaxN:
@@ -228,7 +316,7 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
         if (first_cell_df2$possible == TRUE) {
           
           # create the path_df:
-          path_df <-  as.data.frame(matrix(ncol = 3, nrow = ncol(abund_df)))
+          path_df <-  as.data.frame(matrix(ncol = 3, nrow = ncol(frame_possible_df)))
           colnames(path_df) <- c("value", "cam_nm", "timestep")
           
           # add the first cam:
@@ -256,7 +344,7 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
           
           # Compute the sum for this first path and compare to SmaxN_small_UI:
           path_df$value <- as.numeric(path_df$value)
-          S <- sum(path_df$value)
+          S <- sum(path_df$value, na.rm = TRUE)
           
           if (S > max_small) {
             max_small <- S
@@ -287,7 +375,17 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
           
           # add the SmaxN of the given timestep to the SmaxN vect:
           SmaxN_vect <- append(SmaxN_vect, v)
-          path_saved <- append(path_saved, unlist(value$"one_path"))
+          
+          # add the path:
+          if (v == max_small) {
+            path_saved <- append(path_saved, list(value$"SmaxN_path"))
+          }
+          
+          if (v > max_small) {
+            max_small <- v
+            path_saved <- NULL
+            path_saved <- c(list(value$"SmaxN_path"))
+          }
           
           b <- b + 1
           
@@ -312,6 +410,7 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
       return_list <- list("maxN" = maxN, 
                           "SmaxN" = SmaxN,
                           "path_saved" = path_saved,
+                          "number_SmaxN_path" =  length(path_saved),
                           "SmaxN_timestep" = SmaxN_timestep,
                           "maxN_cam" = maxN_cam,
                           "maxN_timestep" = maxN_timestep)

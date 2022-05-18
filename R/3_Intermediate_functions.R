@@ -186,6 +186,8 @@ cam.order <- function(time_df) {
 #' to the cameras and the rows refers to the time. \strong{Time must be given
 #' in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
 #' in the same order in the abund_df and the time_df!}. 
+#'
+#' @param trash_rows a vector gathering the number of rows that should not be studied
 #' 
 #' @return the abundance dataframe with NA on all cells except in the frame of 
 #' possible around the studied timestep T.
@@ -209,7 +211,7 @@ cam.order <- function(time_df) {
 #' 
 
 
-frame.possible <- function(T, time_df, abund_df) {
+frame.possible <- function(T, time_df, abund_df, trash_rows) {
   
   
   # get the name of the first camera on which all paths will begin:
@@ -277,6 +279,8 @@ frame.possible <- function(T, time_df, abund_df) {
       span_start <- T - span
       span_end <- T + span
       
+      cam_ok <- append(cam_ok, colnames(abund_df)[i])
+      
     } # end loop if don't study the second camera
     
     
@@ -296,28 +300,33 @@ frame.possible <- function(T, time_df, abund_df) {
     
     # Now let's "reduce" the abundance df by adding NAs outside the frame of ...
     # ... possible:
+    if (i > 1) {
+      
+      if (span_start == 1 & span_end < nrow(abund_df)) {
+        rownames(abund_df) <- as.numeric(rownames(abund_df))
+        abund_df[which(as.numeric(rownames(abund_df)) > span_end), i] <- NA
+      }
+      
+      if (span_start > 1 & span_end == nrow(abund_df)) {
+        rownames(abund_df) <- as.numeric(rownames(abund_df))
+        abund_df[which(as.numeric(rownames(abund_df)) < span_start), i] <- NA
+      }
+      
+      if (span_start > 1 & span_end < nrow(abund_df)) {
+        rownames(abund_df) <- as.numeric(rownames(abund_df))
+        abund_df[which(as.numeric(rownames(abund_df)) > span_end), i] <- NA
+        abund_df[which(as.numeric(rownames(abund_df)) < span_start), i] <- NA
+      }
     
-    if (span_start == 1 & span_end < nrow(abund_df)) {
-      rownames(abund_df) <- as.numeric(rownames(abund_df))
-      abund_df[which(as.numeric(rownames(abund_df)) > span_end), i] <- NA
     }
     
-    if (span_start > 1 & span_end == nrow(abund_df)) {
-      rownames(abund_df) <- as.numeric(rownames(abund_df))
-      abund_df[which(as.numeric(rownames(abund_df)) < span_start), i] <- NA
-    }
-    
-    if (span_start > 1 & span_end < nrow(abund_df)) {
-      rownames(abund_df) <- as.numeric(rownames(abund_df))
-      abund_df[which(as.numeric(rownames(abund_df)) > span_end), i] <- NA
-      abund_df[which(as.numeric(rownames(abund_df)) < span_start), i] <- NA
-    }
 
-    cam_ok <- append(cam_ok, colnames(abund_df)[i])
     
-  } # end loop on all cameras except the first one
+  } # end loop on all cameras
   
-  
+  # remove rows which are in the trash rows:
+  abund_df <- abund_df[c(! rownames(abund_df) %in% trash_rows), ]
+
   return("frame_possible" = abund_df)
 
 }
@@ -399,12 +408,13 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
   # save the frame_possible df so can rewrite values when set to NA:
   saved_frame_possible_df <- frame_possible_df
   
- 
-  
+
   # get the partial sum pS which is the sum of the values alreday on the path:
   path_df$value <- as.numeric(path_df$value)
   pS <- sum(path_df$value, na.rm = TRUE)
   
+  # initialise the vector saving the path for the highest SmaxN:
+  path_saved <- NULL
   
   # while all cameras not studied:
   while (n > 1) {
@@ -463,12 +473,17 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
         path_df$timestep <- as.numeric(path_df$timestep)
         
         
-        # if S > SmaxN_small_UI, replace:
+        # if S > SmaxN_small_UI, replace (= so have at least one path on path_saved):
+        # (= so have at least one path on path_saved):
+        if (S == SmaxN_small_UI) {
+          path_saved <- append(path_saved, list(path_df))
+        }
         if (S > SmaxN_small_UI) {
           SmaxN_small_UI <- S
           path_saved <- 0
-          path_saved <- path_df
+          path_saved <- list(path_df)
         }
+        
         print(paste0("path so far is = ", sep = "", path_df))
         print(paste0("SmaxN_small_UI =", sep = "", SmaxN_small_UI))
         
@@ -628,7 +643,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
     
   } # end while n > 1
   
+  
   return(list("SmaxN_timestep"= SmaxN_small_UI,
-         "one_path" = path_saved))
+         "SmaxN_path" = path_saved))
 
 }
