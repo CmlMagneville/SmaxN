@@ -47,6 +47,5 @@ cam_order <- cam.order(time_df)
 
 abund_df <- abund_df[, as.vector(unlist(cam_order))]
 
-frame_possible <- frame.possible(T = 4, time_df, abund_df)
 
 }

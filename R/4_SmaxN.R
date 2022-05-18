@@ -226,7 +226,8 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
             if ((small_SmaxN_df$SmaxN[as.numeric(k)] == big_SmaxN_df$SmaxN[as.numeric(m)])) {
               if (small_SmaxN_df$SmaxN[as.numeric(k)] == max_big) {
                 print("SmaxN small UI = SmaxN big UI")
-                return("SmaxN" = small_SmaxN_df$SmaxN[which(small_SmaxN_df$row == k)])
+                return(list("SmaxN" = small_SmaxN_df$SmaxN[which(small_SmaxN_df$row == k)],
+                            "timestep" = k))
               }
             }
           }
@@ -237,8 +238,8 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
       
       # order the rows by decreasing order so that study intervals with the ...
       # ... biggest SmaxN first:
-      order_big_SmaxN_df <- dplyr::arrange(add_clean_big_df, desc(SmaxN))
-      order_SmaxN_df <- dplyr::arrange(order_big_SmaxN_df, desc(SmaxN))
+      order_big_SmaxN_df <- dplyr::arrange(add_clean_big_df, dplyr::desc(SmaxN))
+      order_SmaxN_df <- dplyr::arrange(order_big_SmaxN_df, dplyr::desc(SmaxN))
       
       
     #### order the abundance df so cameras ok:

@@ -50,18 +50,5 @@ cam_order <- cam.order(time_df)
 
 abund_df <- abund_df[, as.vector(unlist(cam_order))]
 
-frame_possible_df <- frame.possible(T = 4, time_df, abund_df)
-
-n <- 4
-
-path_df <- data.frame("value" = c(0, 4, 0), 
-                      "cam_nm" = c("D", "B", "C"), 
-                      "timestep" =  c(4, 2, 2))
-path_df[4, ] <- rep(NA, 3)
-                      
-SmaxN_small_UI <- 10
-
-SmaxN <- recursive.paths(T = 4, frame_possible_df, n, path_df, SmaxN_small_UI,
-time_df) 
 
 }
