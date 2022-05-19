@@ -317,7 +317,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
             
             cam_nm <- colnames(frame_possible_df)[j]
             timestep <- first_cell_df2$timestep
-            value <- frame_possible_df[which(rownames(bloc) == timestep), cam_nm]
+            value <- frame_possible_df[which(rownames(frame_possible_df) == timestep), cam_nm]
             
             # complete the path_df
             path_df[j, ] <- c(value, cam_nm, timestep)
