@@ -4,7 +4,7 @@
 \alias{SmaxN.computation}
 \title{Compute the Synchronised MaxN (SmaxN) (highest value)}
 \usage{
-SmaxN.computation(abund_df, fish_speed, dist_df, paral.option)
+SmaxN.computation(abund_df, fish_speed, dist_df)
 }
 \arguments{
 \item{abund_df}{a numerical dataframe containing the abundance of a 
@@ -25,12 +25,6 @@ to say if the camera pooling is done at the second level),
  and the diagonal is filled with 0. \strong{Rows names and columns names
  must be cameras names}. \strong{BE CAREFUL that the cameras are 
 the same and in the same order in the dist_df and in the abund_df!}}
-
-\item{paral.option}{a logical value referring to the 
-parallelisation process: if \code{FALSE}, then no parallelisation is 
-realised, if \code{TRUE}, then parallelisation is done on 
-(number of cores - 1) (so ok to do anything else on your machine). 
-Currently, parallelisation is only possible on Windows computers.}
 }
 \value{
 if more than one camera: if the fish speed is taken into account, 

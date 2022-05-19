@@ -23,12 +23,6 @@
 #' in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
 #' in the same order in the abund_df and the time_df!}.
 #' 
-#' @param paral.option a logical value referring to the 
-#' parallelisation process: if \code{FALSE}, then no parallelisation is 
-#' realised, if \code{TRUE}, then parallelisation is done on 
-#' (number of cores - 1) (so ok to do anything else on your machine). 
-#' Currently, parallelisation is only possible on Windows computers.
-#' 
 #' @return if more than one camera: if the fish speed is taken into account, 
 #' the function returns in a list: 
 #' \strong{the Synchronised maxN (SmaxN) value} (the maximal value computed by 
@@ -65,7 +59,7 @@
 
 
 
-SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
+SmaxN.computation <- function(abund_df, fish_speed, dist_df) {
   
   
   #### Checks and basic manips
@@ -87,22 +81,8 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
   # put rownames of the abundance_df as number:
   rownames(abund_df) <- c(1:nrow(abund_df)) 
   
-  
-  #### Parallelisation def
-  
-  if (paral.option == TRUE) {
-    
-    # returns the number of available hardware threads:
-    nb_cores <- parallel::detectCores(logical = TRUE) 
-    
-    #  allocate this number of available cores to R and register:
-    cl <- parallel::makeCluster(nb_cores - 1)  
-    doParallel::registerDoParallel(cl) 
-    
-  }
-  
  
-  #### Begin the SmaxN serach
+  #### Begin the SmaxN search
   
   ### Checks if no easy solution (SmaxN_small_UI):
   
