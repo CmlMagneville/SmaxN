@@ -48,7 +48,7 @@ is known.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SmaxN.computation</span><span class="op">(</span><span class="va">abund_df</span>, <span class="va">fish_speed</span>, <span class="va">dist_df</span>, <span class="va">paral.option</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SmaxN.computation</span><span class="op">(</span><span class="va">abund_df</span>, <span class="va">fish_speed</span>, <span class="va">dist_df</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -72,12 +72,6 @@ to say if the camera pooling is done at the second level),
  and the diagonal is filled with 0. <strong>Rows names and columns names
  must be cameras names</strong>. <strong>BE CAREFUL that the cameras are 
 the same and in the same order in the dist_df and in the abund_df!</strong></p></dd>
-<dt>paral.option</dt>
-<dd><p>a logical value referring to the 
-parallelisation process: if <code>FALSE</code>, then no parallelisation is 
-realised, if <code>TRUE</code>, then parallelisation is done on 
-(number of cores - 1) (so ok to do anything else on your machine). 
-Currently, parallelisation is only possible on Windows computers.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
