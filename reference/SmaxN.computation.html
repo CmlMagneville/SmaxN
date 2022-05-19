@@ -48,7 +48,7 @@ is known.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SmaxN.computation</span><span class="op">(</span><span class="va">abund_df</span>, <span class="va">fish_speed</span>, <span class="va">dist_df</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">SmaxN.computation</span><span class="op">(</span><span class="va">abund_df</span>, <span class="va">speed</span>, <span class="va">dist_df</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -59,10 +59,10 @@ given species across continuous time for several cameras. The columns refer
 to the cameras and the rows refers to the time. <strong>Time must be given
 in seconds and be continuous</strong>. <strong>BE CAREFUL that the cameras are 
 in the same order in the abund_df and the time_df!</strong>.</p></dd>
-<dt>fish_speed</dt>
+<dt>speed</dt>
 <dd><p>a numerical value refering to the maximal speed of the 
 studied species. <strong>Speed must be given in meters per second</strong>. If the
-computation of maxN values should not take into account fish speed (that is
+computation of maxN values should not take into account speed (that is
 to say if the camera pooling is done at the second level), 
 <code>fish_speed = NULL</code></p></dd>
 <dt>dist_df</dt>
