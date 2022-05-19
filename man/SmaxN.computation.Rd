@@ -4,7 +4,7 @@
 \alias{SmaxN.computation}
 \title{Compute the Synchronised MaxN (SmaxN) (highest value)}
 \usage{
-SmaxN.computation(abund_df, fish_speed, dist_df)
+SmaxN.computation(abund_df, speed, dist_df)
 }
 \arguments{
 \item{abund_df}{a numerical dataframe containing the abundance of a 
@@ -13,9 +13,9 @@ to the cameras and the rows refers to the time. \strong{Time must be given
 in seconds and be continuous}. \strong{BE CAREFUL that the cameras are 
 in the same order in the abund_df and the time_df!}.}
 
-\item{fish_speed}{a numerical value refering to the maximal speed of the 
+\item{speed}{a numerical value refering to the maximal speed of the 
 studied species. \strong{Speed must be given in meters per second}. If the
-computation of maxN values should not take into account fish speed (that is
+computation of maxN values should not take into account speed (that is
 to say if the camera pooling is done at the second level), 
 \code{fish_speed = NULL}}
 

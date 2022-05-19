@@ -11,9 +11,9 @@
 #'  must be cameras names}. \strong{BE CAREFUL that the cameras are 
 #' the same and in the same order in the dist_df and in the abund_df!}
 #' 
-#' @param fish_speed a numerical value refering to the maximal speed of the 
+#' @param speed a numerical value refering to the maximal speed of the 
 #'  studied species. \strong{Speed must be given in meters per second}. If the
-#'  computation of maxN values should not take into account fish speed (that is
+#'  computation of maxN values should not take into account speed (that is
 #'  to say if the camera pooling is done at the second level), 
 #'  \code{fish_speed = NULL}
 #'  
@@ -59,7 +59,11 @@
 
 
 
-SmaxN.computation <- function(abund_df, fish_speed, dist_df) {
+SmaxN.computation <- function(abund_df, speed, dist_df) {
+  
+  
+  # correct name because fish_speed used in all the algo:
+  fish_speed <- speed
   
   
   #### Checks and basic manips
