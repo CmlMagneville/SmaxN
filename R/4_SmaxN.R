@@ -326,12 +326,9 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
                             first_cell_df2$timestep)
           
           
-          #### Search the first path to work on 
-          # NOTE: not the one with the highest values
-          # possible on each camera so we can get rid of a lot of other rows
-          # thereafter: because algorithm takes too long to find! As first vers...:
+          #### First path to work on : 
+          # the one on the studied timestep:
           
-          # Thus chose the row of the timestep:
           for (j in (2:nrow(path_df))) {
             
             cam_nm <- colnames(frame_possible_df)[j]
@@ -405,6 +402,9 @@ SmaxN.computation <- function(abund_df, fish_speed, dist_df, paral.option) {
       
       vect_maxN_sum <- apply(abund_df, 1, sum)
       SmaxN_timestep <- max(vect_maxN_sum) 
+      
+      # removing NULL element from path_saved (the first one when creating object):
+      path_saved <- path_saved[which(! is.null(path_saved))]
       
       
       # return:
