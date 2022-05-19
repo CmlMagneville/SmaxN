@@ -317,7 +317,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
             
             cam_nm <- colnames(frame_possible_df)[j]
             timestep <- first_cell_df2$timestep
-            value <- frame_possible_df[timestep, cam_nm]
+            value <- frame_possible_df[which(rownames(bloc) == timestep), cam_nm]
             
             # complete the path_df
             path_df[j, ] <- c(value, cam_nm, timestep)
@@ -337,8 +337,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
           path_df[nrow(path_df), ] <- rep(NA, 3)
           
           #### Compute all possible paths and keep in mind the highest SmaxN:
-          # try without parallelisation
-          
+
           # compute the SmaxN of the big interval of the given timestep:
           T <- rownames(frame_possible_df[!is.na(frame_possible_df[, 1]), ])
           T <- as.numeric(T)

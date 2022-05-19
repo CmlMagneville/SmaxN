@@ -455,7 +455,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
         # add the value to the path:
         path_df$value[n] <- value
         path_df$cam_nm[n] <- colnames(frame_possible_df)[n]
-        path_df$timestep[n] <- rownames(cells_coord_poss[which(cells_coord_poss$values == value), ])[1]
+        interm_timestep <- cells_coord_poss[which(cells_coord_poss$values == value), ]
+        path_df$timestep[n] <- interm_timestep$timestep[1]
         path_df$timestep <- as.numeric(path_df$timestep)
         
         
@@ -506,7 +507,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           # the cell becomes NA:
           cam_nm <- possible_cell$cam_nm
           timestep <- possible_cell$timestep
-          frame_possible_df[timestep, cam_nm] <- NA
+          frame_possible_df[which(rownames(frame_possible_df) == timestep), cam_nm] <- NA
           
           print(paste0("FALSE - The frame of possible so far is =", sep = "", frame_possible_df))
           
@@ -566,7 +567,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
             print("S <= SmaxN_small_UI")
             
             # this cell on n become already tested:
-            frame_possible_df[possible_cell$timestep, possible_cell$cam_nm] <- NA
+            frame_possible_df[which(rownames(frame_possible_df) == possible_cell$timestep), possible_cell$cam_nm] <- NA
             
             # give back the values for cam (n+1) until nb_cam (n+1, n+2, n+3 ...):
             for (k in ((n+1):ncol(frame_possible_df))) {
@@ -604,7 +605,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
         # the cell from cam (n-1) becomes NA
         cam_nm <- path_df$cam_nm[(n-1)]
         timestep <- path_df$timestep[(n-1)]
-        frame_possible_df[timestep, cam_nm] <- NA
+        frame_possible_df[which(rownames(frame_possible_df) == timestep), cam_nm] <- NA
         
         print(paste0("The frame possible df = ", sep = " ", frame_possible_df))
         

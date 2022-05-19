@@ -309,23 +309,23 @@ first.cam.possible <- function(time_df, first_cell_df,
         # ... on a border thus, timestep + span will not be possible:
         
         # if start pb:
-        if (studied_cell_time - span <= 0) { #equal because no 0 in the df rows
+        if (studied_cell_time - span <= rownames(bloc)[1]) { #equal because no 0 in the df rows
           
           # then the span must begin at the first row of the bloc:
-          start_span <- 1
+          start_span <- rownames(bloc)[1]
           
         }
         
         # if end pb:
-        if (studied_cell_time + span > nrow(bloc)) {
+        if (studied_cell_time + span > rownames(bloc)[nrow(bloc)]) {
           
           # then the span must begin at the first row of the bloc:
-          end_span <- nrow(bloc)
+          end_span <- rownames(bloc)[nrow(bloc)]
           
         }
         
         # max for the values of the cam j in the possible cells around the studied:
-        max_cam <- max(bloc[start_span:end_span, j], na.rm = TRUE)
+        max_cam <- max(bloc[which(rownames(bloc) %in% c(start_span:end_span)), j], na.rm = TRUE)
         vect_cam_values <- append(vect_cam_values, max_cam)
         
       } # end if not the studied cam
