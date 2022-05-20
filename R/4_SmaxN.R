@@ -257,7 +257,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
         
         
         # compute the frame of possible around the studied timestep:
-        frame_possible_df <- frame.possible(T = as.numeric(order_SmaxN_df$row[b]), 
+        frame_possible_df <- SmaxN::frame.possible(T = as.numeric(order_SmaxN_df$row[b]), 
                                             time_df, abund_df, trash_rows)
         
         # reduce the frame_possible_df by deleting rows with all NAs:
@@ -389,7 +389,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
               
               print("Starting recursive ")
               
-              value <- recursive.paths(T = T, 
+              value <- SmaxN::recursive.paths(T = T, 
                                        frame_possible_df, 
                                        n = ncol(frame_possible_df), 
                                        path_df = path_df, 
