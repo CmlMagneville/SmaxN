@@ -229,7 +229,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
     #### order the abundance df so cameras ok:
       
       # compute the order in whch cameras should be viewed:
-      cam_order <- cam.order(time_df)
+      cam_order <- SmaxN::cam.order(time_df)
       
       # order the abundance columns:
       abund_df2 <- abund_df
@@ -271,106 +271,117 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
         if (! colnames(frame_possible_df)[1] %in% diff_0) {
           frame_possible_df <- frame_possible_df[, c(colnames(frame_possible_df)[1], diff_0)]
         }
+        
+        # if frame possibleis not NULL (ie if some cam are different from all 0):
+        if (is.data.frame(frame_possible_df)) {
+          
+          
+          # check that with the first cell of this timestep we can have a "good"
+          # SmaxN:
+          
+          first_cam_nm <- colnames(frame_possible_df)[1]
+          
+          first_cell_df <- data.frame("values" = abund_df[as.numeric(order_SmaxN_df$row[b]), 
+                                                          first_cam_nm],
+                                      "cam_nm" = first_cam_nm,
+                                      "timestep" = as.numeric(order_SmaxN_df$row[b]))
+          
+          
+          # check if first cell can be kept or not ...
+          # ... lead to the SmaxN and thus remove these cells thereafter:
+          first_cell_df2 <- first.cam.possible(time_df, first_cell_df, 
+                                               SmaxN_small_UI = max_small, 
+                                               bloc = frame_possible_df)
+          
+          # if the first cell is not possible (does not lead to "good" SmaxN):
+          # then stop the process for this timestep
+          if (first_cell_df2$possible == FALSE) {
+            b <- b + 1
+          }
+          
+          
+          #### Create the path df:
+          
+          if (first_cell_df2$possible == TRUE) {
+            
+            # create the path_df:
+            path_df <-  as.data.frame(matrix(ncol = 3, nrow = ncol(frame_possible_df)))
+            colnames(path_df) <- c("value", "cam_nm", "timestep")
+            
+            # add the first cam:
+            path_df[1, ] <- c(first_cell_df2$values, 
+                              first_cell_df2$cam_nm,
+                              first_cell_df2$timestep)
+            
+            
+            #### First path to work on : 
+            # the one on the studied timestep:
+            
+            for (j in (2:nrow(path_df))) {
+              
+              cam_nm <- colnames(frame_possible_df)[j]
+              timestep <- first_cell_df2$timestep
+              value <- frame_possible_df[which(rownames(frame_possible_df) == timestep), cam_nm]
+              
+              # complete the path_df
+              path_df[j, ] <- c(value, cam_nm, timestep)
+              
+            }
+            
+            # Compute the sum for this first path and compare to SmaxN_small_UI:
+            path_df$value <- as.numeric(path_df$value)
+            S <- sum(path_df$value, na.rm = TRUE)
+            
+            if (S > max_small) {
+              max_small <- S
+            }
+            
+            # remove the last camera of the path,thus initialising the
+            # recursive fct and running backward:
+            path_df[nrow(path_df), ] <- rep(NA, 3)
+            
+            #### Compute all possible paths and keep in mind the highest SmaxN:
+            
+            # compute the SmaxN of the big interval of the given timestep:
+            T <- rownames(frame_possible_df[!is.na(frame_possible_df[, 1]), ])
+            T <- as.numeric(T)
+            
+            print("Starting recursive ")
+            
+            value <- recursive.paths(T = T, 
+                                     frame_possible_df, 
+                                     n = ncol(frame_possible_df), 
+                                     path_df = path_df, 
+                                     SmaxN_small_UI = max_small,
+                                     time_df)
+            v <- value$"SmaxN_timestep"
+            
+            print("Ending recursive ")
+            
+            # add the SmaxN of the given timestep to the SmaxN vect:
+            SmaxN_vect <- append(SmaxN_vect, v)
+            
+            # add the path:
+            if (v == max_small) {
+              path_saved <- append(path_saved, list(value$"SmaxN_path"))
+            }
+            
+            if (v > max_small) {
+              max_small <- v
+              path_saved <- NULL
+              path_saved <- c(list(value$"SmaxN_path"))
+            }
+            
+            b <- b + 1
+            
+          } # end if first cell possibly leads to a "good" SmaxN
 
-        # check that with the first cell of this timestep we can have a "good"
-        # SmaxN:
+        } # end if there is some colonnes different 0 in the frame of possible
         
-        first_cam_nm <- colnames(frame_possible_df)[1]
-        
-        first_cell_df <- data.frame("values" = abund_df[as.numeric(order_SmaxN_df$row[b]), 
-                                                        first_cam_nm],
-                                    "cam_nm" = first_cam_nm,
-                                    timestep = as.numeric(order_SmaxN_df$row[b]))
-        
-        
-        # check if first cell can be kept or not ...
-        # ... lead to the SmaxN and thus remove these cells thereafter:
-        first_cell_df2 <- first.cam.possible(time_df, first_cell_df, 
-                                             SmaxN_small_UI = max_small, 
-                                             bloc = frame_possible_df)
-        
-        # if the first cell is not possible (does not lead to "good" SmaxN):
-        # then stop the process for this timestep
-        if (first_cell_df2$possible == FALSE) {
+        # if all columns in the frame of possible = 0:
+        if (is.numeric(frame_possible_df)) {
           b <- b + 1
         }
-        
-        
-        #### Create the path df:
-        
-        if (first_cell_df2$possible == TRUE) {
-          
-          # create the path_df:
-          path_df <-  as.data.frame(matrix(ncol = 3, nrow = ncol(frame_possible_df)))
-          colnames(path_df) <- c("value", "cam_nm", "timestep")
-          
-          # add the first cam:
-          path_df[1, ] <- c(first_cell_df2$values, 
-                            first_cell_df2$cam_nm,
-                            first_cell_df2$timestep)
-          
-          
-          #### First path to work on : 
-          # the one on the studied timestep:
-          
-          for (j in (2:nrow(path_df))) {
-            
-            cam_nm <- colnames(frame_possible_df)[j]
-            timestep <- first_cell_df2$timestep
-            value <- frame_possible_df[which(rownames(frame_possible_df) == timestep), cam_nm]
-            
-            # complete the path_df
-            path_df[j, ] <- c(value, cam_nm, timestep)
-            
-          }
-          
-          # Compute the sum for this first path and compare to SmaxN_small_UI:
-          path_df$value <- as.numeric(path_df$value)
-          S <- sum(path_df$value, na.rm = TRUE)
-          
-          if (S > max_small) {
-            max_small <- S
-          }
-          
-          # remove the last camera of the path,thus initialising the
-          # recursive fct and running backward:
-          path_df[nrow(path_df), ] <- rep(NA, 3)
-          
-          #### Compute all possible paths and keep in mind the highest SmaxN:
-
-          # compute the SmaxN of the big interval of the given timestep:
-          T <- rownames(frame_possible_df[!is.na(frame_possible_df[, 1]), ])
-          T <- as.numeric(T)
-          
-          print("Starting recursive ")
-          
-          value <- recursive.paths(T = T, 
-                               frame_possible_df, 
-                               n = ncol(frame_possible_df), 
-                               path_df = path_df, 
-                               SmaxN_small_UI = max_small,
-                               time_df)
-          v <- value$"SmaxN_timestep"
-          
-          print("Ending recursive ")
-          
-          # add the SmaxN of the given timestep to the SmaxN vect:
-          SmaxN_vect <- append(SmaxN_vect, v)
-          
-          # add the path:
-          if (v == max_small) {
-            path_saved <- append(path_saved, list(value$"SmaxN_path"))
-          }
-          
-          if (v > max_small) {
-            max_small <- v
-            path_saved <- NULL
-            path_saved <- c(list(value$"SmaxN_path"))
-          }
-          
-          b <- b + 1
-          
-        } # end if first cell possibly leads to a "good" SmaxN
 
       } # end while
       
