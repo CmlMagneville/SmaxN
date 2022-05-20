@@ -324,7 +324,7 @@ frame.possible <- function(T, time_df, abund_df, trash_rows) {
   } # end loop on all cameras
   
   # remove rows which are in the trash rows:
-  abund_df <- abund_df[c(! rownames(abund_df) %in% trash_rows), ]
+  abund_df <- abund_df[c(! rownames(abund_df) %in% as.numeric(trash_rows)), ]
 
   return("frame_possible" = abund_df)
 

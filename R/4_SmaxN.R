@@ -98,7 +98,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
       
       
       # get the time_df using the 1st function:
-      time_df <- compute.cam.time(dist_df = dist_df, fish_speed = fish_speed)
+      time_df <- SmaxN::compute.cam.time(dist_df = dist_df, fish_speed = fish_speed)
       
       
       # get the length of the small interval build the lowest time between ...
