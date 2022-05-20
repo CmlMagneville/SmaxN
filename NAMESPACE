@@ -3,5 +3,8 @@
 export(SmaxN.computation)
 export(cam.order)
 export(compute.cam.time)
+export(first.cam.possible)
 export(frame.possible)
+export(next.possible)
+export(pseudoSmaxN.timestep)
 export(recursive.paths)

@@ -50,6 +50,7 @@
 #'  
 #'  # Run the function:
 #'  
+#' @export
 #' 
 
 
@@ -155,6 +156,7 @@ pseudoSmaxN.timestep <- function(time_df, abund_df, timestep, value) {
 #' function tests for all possible values (all ex-aequo) so we have a df 
 #' showing TRUE or FALSE for all ex-aequo given the values already on the path.
 #' 
+#' @export
 
 next.possible <- function(max_bloc, next_possible, time_df) {
   
@@ -269,7 +271,9 @@ next.possible <- function(max_bloc, next_possible, time_df) {
 #'  time_df <- data.frame("A" = c(0,5,6,6), "B" = c(5,0,3,3), 
 #'  "C" = c(6,3, 0, 3), "D" = c(6,3,3,0))
 #'  rownames(time_df) <- c("A", "B", "C", "D")
-#'  
+#'
+#' @export
+#'
 
 
 first.cam.possible <- function(time_df, first_cell_df,

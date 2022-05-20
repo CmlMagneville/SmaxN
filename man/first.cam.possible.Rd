@@ -42,5 +42,5 @@ to the maximal SmaxN computed on small UI.
  time_df <- data.frame("A" = c(0,5,6,6), "B" = c(5,0,3,3), 
  "C" = c(6,3, 0, 3), "D" = c(6,3,3,0))
  rownames(time_df) <- c("A", "B", "C", "D")
- 
+
 }

@@ -523,7 +523,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           
           # if the second to last camera (because only one camera left to add)
           if (n == (ncol(frame_possible_df) - 1)) {
-            S <- pS + possible_cell$values + max(frame_possible_df[, c((n+1):ncol(frame_possible_df))])
+            S <- pS + possible_cell$values + max(frame_possible_df[, c((n+1):ncol(frame_possible_df))], na.rm = TRUE)
           }
           
           # if any other camera:

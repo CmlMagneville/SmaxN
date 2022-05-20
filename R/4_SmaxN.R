@@ -121,13 +121,13 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
       for (i in (1:nrow(abund_df))) {
         
         # compute the SmaxN for the timestep and the small span:
-        small <- pseudoSmaxN.timestep(time_df = time_df,
+        small <- SmaxN::pseudoSmaxN.timestep(time_df = time_df,
                                         abund_df = abund_df,
                                         timestep = i,
                                         value = small_UI)
         
         # compute the SmaxN for the timestep and the big span:
-        big <- pseudoSmaxN.timestep(time_df = time_df,
+        big <- SmaxN::pseudoSmaxN.timestep(time_df = time_df,
                                     abund_df = abund_df,
                                     timestep = i,
                                     value = big_UI)
@@ -312,6 +312,9 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
           
           # if frame of possible is not filled with 0 (ie if some camera are different from all 0):
           if (is.data.frame(frame_possible_df)) {
+            
+            # delete rows with NA again (because some cameras may have been deleted):
+            frame_possible_df <- frame_possible_df[rowSums(is.na(frame_possible_df)) != ncol(frame_possible_df), ]
             
             
             # check that with the first cell of this timestep we can have a "good"
