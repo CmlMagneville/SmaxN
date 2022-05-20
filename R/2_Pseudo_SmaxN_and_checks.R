@@ -40,7 +40,9 @@
 #' 3 cases of the `abund_df`.
 #' 
 #' @return the function returns the SmaxN value for the given timestep and span
-#'  
+#'
+#' @export
+#' 
 #' @examples
 #'  # Build distance dataframe for the example:
 #'  abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3), 
@@ -50,7 +52,6 @@
 #'  
 #'  # Run the function:
 #'  
-#' @export
 #' 
 
 
@@ -157,6 +158,7 @@ pseudoSmaxN.timestep <- function(time_df, abund_df, timestep, value) {
 #' showing TRUE or FALSE for all ex-aequo given the values already on the path.
 #' 
 #' @export
+#' 
 
 next.possible <- function(max_bloc, next_possible, time_df) {
   
@@ -261,6 +263,8 @@ next.possible <- function(max_bloc, next_possible, time_df) {
 #' 
 #' @return the completed \code{first_cell_df}
 #'
+#' @export 
+
 #' @examples 
 #' 
 #'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
@@ -272,7 +276,6 @@ next.possible <- function(max_bloc, next_possible, time_df) {
 #'  "C" = c(6,3, 0, 3), "D" = c(6,3,3,0))
 #'  rownames(time_df) <- c("A", "B", "C", "D")
 #'
-#' @export
 #'
 
 
