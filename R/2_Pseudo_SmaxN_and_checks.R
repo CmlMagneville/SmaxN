@@ -263,8 +263,6 @@ next.possible <- function(max_bloc, next_possible, time_df) {
 #' 
 #' @return the completed \code{first_cell_df}
 #'
-#' @export 
-
 #' @examples 
 #' 
 #'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
@@ -276,6 +274,7 @@ next.possible <- function(max_bloc, next_possible, time_df) {
 #'  "C" = c(6,3, 0, 3), "D" = c(6,3,3,0))
 #'  rownames(time_df) <- c("A", "B", "C", "D")
 #'
+#' @export 
 #'
 
 

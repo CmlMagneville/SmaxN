@@ -405,7 +405,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
   # while all cameras not studied:
   while (n > 1) {
     
-    print(paste0("n = ", sep = "", n))
+    #print(paste0("n = ", sep = "", n))
 
     #### STILL SOME POSSIBLE CELLS FOR CAM N
     
