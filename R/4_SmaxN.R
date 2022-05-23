@@ -263,26 +263,27 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
         # reduce the frame_possible_df by deleting rows with all NAs:
         frame_possible_df <- frame_possible_df[rowSums(is.na(frame_possible_df)) != ncol(frame_possible_df), ]
 
-        # remove columns with only 0 (but not first camera if the cell = 0):
+        # keep columns with values different from all 0 (but not first camera if the cell = 0):
         diff_0 <- colnames(frame_possible_df[, which(colSums(frame_possible_df, na.rm = TRUE) != 0)])
-        
+        diff_0 <- 
         
         # if only one camera with values different from 0, then SmaxN equal the max of the cam:
         if (is.null(diff_0)) {
+          
+          # value:
+          v <- max(frame_possible_df[, which(colSums(frame_possible_df, na.rm = TRUE) != 0)], na.rm = TRUE)
           
           # add the name of the camera for with the SmaxN is obtained (because only one cam with values != 0)
           if (v == max_small) {
             # name of the cam instead of the path:
             path_saved <- append(path_saved, names(which(colSums(frame_possible_df, na.rm = TRUE) != 0) == TRUE))
-            # value:
-            v <- max(frame_possible_df[, which(colSums(frame_possible_df, na.rm = TRUE) != 0)])
+            
             # add the SmaxN of the given timestep to the SmaxN vect:
             SmaxN_vect <- append(SmaxN_vect, v)
           }
           
           if (v > max_small) {
             # value:
-            v <- max(frame_possible_df[, which(colSums(frame_possible_df, na.rm = TRUE) != 0)])
             # add the SmaxN of the given timestep to the SmaxN vect:
             SmaxN_vect <- append(SmaxN_vect, v)
             # replace SmaxN:
