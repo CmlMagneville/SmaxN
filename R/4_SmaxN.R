@@ -265,8 +265,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
 
         # keep columns with values different from all 0 (but not first camera if the cell = 0):
         diff_0 <- colnames(frame_possible_df[, which(colSums(frame_possible_df, na.rm = TRUE) != 0)])
-        diff_0 <- 
-        
+
         # if only one camera with values different from 0, then SmaxN equal the max of the cam:
         if (is.null(diff_0)) {
           
