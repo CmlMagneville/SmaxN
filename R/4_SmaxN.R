@@ -387,7 +387,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
               T <- rownames(frame_possible_df[!is.na(frame_possible_df[, 1]), ])
               T <- as.numeric(T)
               
-              print("Starting recursive ")
+              #print("Starting recursive ")
               
               value <- SmaxN::recursive.paths(T = T, 
                                        frame_possible_df, 
@@ -397,7 +397,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
                                        time_df)
               v <- value$"SmaxN_timestep"
               
-              print("Ending recursive ")
+              #print("Ending recursive ")
               
               # add the SmaxN of the given timestep to the SmaxN vect:
               SmaxN_vect <- append(SmaxN_vect, v)

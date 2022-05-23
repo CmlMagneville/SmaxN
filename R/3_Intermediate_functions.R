@@ -388,7 +388,7 @@ frame.possible <- function(T, time_df, abund_df, trash_rows) {
 recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, time_df) {
   
   
-  print(paste0("n = ", sep = "", n))
+  #print(paste0("n = ", sep = "", n))
   
   
   # save the frame_possible df so can rewrite values when set to NA:
@@ -412,7 +412,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
     # while there are still some possible cells in the frame of possible for the camera n:
     while(length(frame_possible_df[which(! is.na(frame_possible_df[, n])), n]) > 0) {
       
-      print(paste0("Still some possible cells for cam", sep = " ", n))
+      #print(paste0("Still some possible cells for cam", sep = " ", n))
       
       # if the camera is the last one, chose the maximal possible value:
       if (n == ncol(frame_possible_df)) {
@@ -435,14 +435,14 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
         cells_coord_poss <- possible_cell[which(possible_cell$possible == TRUE), ]
         cells_coord_poss <- cells_coord_poss[, -ncol(cells_coord_poss)]
         
-        print(paste0("Cells_coord_poss = ", sep = "", cells_coord_poss))
+        #print(paste0("Cells_coord_poss = ", sep = "", cells_coord_poss))
         
         pS <- sum(path_df$value, na.rm = TRUE)
         value <- max(cells_coord_poss$values)
         S <- pS + value
-        print(paste0("S value = ", sep ="", S))
-        print(paste0("pS = ", sep ="", pS))
-        print(paste0("value = ", sep ="", value))
+        #print(paste0("S value = ", sep ="", S))
+        #print(paste0("pS = ", sep ="", pS))
+        #print(paste0("value = ", sep ="", value))
         
         
         
@@ -450,7 +450,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
         # ... for the studied cam:
         frame_possible_df[which(! is.na(frame_possible_df[, n])), n] <- NA
         
-        print(paste0("path so far is = ", sep = "", path_df))
+        #print(paste0("path so far is = ", sep = "", path_df))
         
         # add the value to the path:
         path_df$value[n] <- value
@@ -471,8 +471,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           path_saved <- list(path_df)
         }
         
-        print(paste0("path so far is = ", sep = "", path_df))
-        print(paste0("SmaxN_small_UI =", sep = "", SmaxN_small_UI))
+        #print(paste0("path so far is = ", sep = "", path_df))
+        #print(paste0("SmaxN_small_UI =", sep = "", SmaxN_small_UI))
         
       } # end if the camera is the last one
       
@@ -498,7 +498,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
         cells_coord_poss <- possible_cell[which(possible_cell$possible == TRUE), ]
         cells_coord_poss <- cells_coord_poss[, -ncol(cells_coord_poss)]
         
-        print(paste0("The studied cell is =", sep = "", possible_cell))
+        #print(paste0("The studied cell is =", sep = "", possible_cell))
         
         
         # if the cell is not possible given the path:
@@ -509,7 +509,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           timestep <- possible_cell$timestep
           frame_possible_df[which(rownames(frame_possible_df) == timestep), cam_nm] <- NA
           
-          print(paste0("FALSE - The frame of possible so far is =", sep = "", frame_possible_df))
+          #print(paste0("FALSE - The frame of possible so far is =", sep = "", frame_possible_df))
           
         } # end if the cell is not possible given the path
         
@@ -535,7 +535,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           # if S > SmaxN_small_UI, ok can take the cell in the path (don't change because don't know if path possible):
           if (S > SmaxN_small_UI) {
             
-            print("S > SmaxN_small_UI")
+            #print("S > SmaxN_small_UI")
             
             # add the cell to the path:
             path_df$value[n] <-  possible_cell$values
@@ -543,8 +543,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
             path_df$timestep[n] <- cells_coord_poss$timestep
             path_df$timestep <- as.numeric(path_df$timestep)
             
-            print("Begin the recursive fct for n + 1 cam")
-            print(paste0("The frame of possible before is =", sep = "", frame_possible_df))
+            #print("Begin the recursive fct for n + 1 cam")
+            #print(paste0("The frame of possible before is =", sep = "", frame_possible_df))
             
             # run for (n+1):
             n <- n + 1
@@ -552,8 +552,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
             # this cell on n become already tested:
             frame_possible_df[cells_coord_poss$timestep, cells_coord_poss$cam_nm] <- NA
             
-            print(paste0("The frame of possible after is =", sep = "", frame_possible_df))
-            print(paste0("The path so far is ", sep = "", path_df))
+            #print(paste0("The frame of possible after is =", sep = "", frame_possible_df))
+            #print(paste0("The path so far is ", sep = "", path_df))
             
             break
             
@@ -564,7 +564,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           # ... and give back the values of cam (n+1):
           if (S <= SmaxN_small_UI) {
             
-            print("S <= SmaxN_small_UI")
+            #print("S <= SmaxN_small_UI")
             
             # this cell on n become already tested:
             frame_possible_df[which(rownames(frame_possible_df) == possible_cell$timestep), possible_cell$cam_nm] <- NA
@@ -589,7 +589,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
     
     if (length(frame_possible_df[which(! is.na(frame_possible_df[, n])), n]) == 0) {
       
-      print(paste0("No more possible cells for cam", sep = " ", n))
+      #print(paste0("No more possible cells for cam", sep = " ", n))
       
       # if we study the camera 2 (the timestep has been finished to be studied):
       if (n == 2) {
@@ -607,17 +607,17 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
         timestep <- path_df$timestep[(n-1)]
         frame_possible_df[which(rownames(frame_possible_df) == timestep), cam_nm] <- NA
         
-        print(paste0("The frame possible df = ", sep = " ", frame_possible_df))
+        #print(paste0("The frame possible df = ", sep = " ", frame_possible_df))
         
         # give back the values for the cells cam n:
         frame_possible_df[, n] <- saved_frame_possible_df[, n]
         
-        print(paste0("The frame possible df = ", sep = " ", frame_possible_df))
+        #print(paste0("The frame possible df = ", sep = " ", frame_possible_df))
         
         # update path and remove n and n - 1 cam:
         path_df[c(n, n-1), ] <- rep(NA, 6)
         
-        print(paste0("The path df = ", sep = " ", path_df))
+        #print(paste0("The path df = ", sep = " ", path_df))
         
         # and then get interested about n - 1 cam:
         n <- n - 1
