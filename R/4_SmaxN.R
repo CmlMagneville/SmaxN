@@ -351,7 +351,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
               
               # add the first cam:
               path_df[1, ] <- c(first_cell_df2$values, 
-                                first_cell_df2$cam_nm,
+                                as.character(first_cell_df2$cam_nm),
                                 first_cell_df2$timestep)
               
               
