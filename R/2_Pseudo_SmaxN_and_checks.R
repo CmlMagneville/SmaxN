@@ -186,6 +186,7 @@ next.possible <- function(max_bloc, next_possible, time_df) {
         
         # compute the time delta which is ok (+1 because one timestep is two cases):
         delta_ok <- time_df[cam_path, cam_next] + 1
+        delta_ok <- as.numeric(delta_ok)
       }
       
       
