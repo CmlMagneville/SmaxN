@@ -137,7 +137,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
                                              value = small_UI)
         
         # compute the SmaxN for the timestep and the big span:
-        frame_possible_df <- frame.possible(i, time_df, abund_df) 
+        frame_possible_df <- SmaxN::frame.possible(i, time_df, abund_df) 
         possible <- sum(apply(frame_possible_df, 2, max, na.rm = TRUE))
         
         # add values in the small and big df:
