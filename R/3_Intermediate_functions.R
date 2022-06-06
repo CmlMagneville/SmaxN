@@ -507,7 +507,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           
           if (n %in% c(2, 3, 4, 5)) {
             print(paste0("n =", sep = " ", n))
-            print(paste0("timestep (n - 1) is", sep = " ", path_df$value[n-1]))
+            print(paste0("timestep (n - 1) is", sep = " ", path_df$timestep[n-1]))
             print(paste("SmaxN_small = ", SmaxN_small_UI))
             print("S <= SmaxN_small")
           }
@@ -534,7 +534,7 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           
           if (n %in% c(2, 3, 4, 5)) {
             print(paste0("n =", sep = " ", n))
-            print(paste0("timestep (n - 1) is", sep = " ", path_df$value[n-1]))
+            print(paste0("timestep (n - 1) is", sep = " ", path_df$timestep[n-1]))
             print(paste("SmaxN_small = ", SmaxN_small_UI))
             print("S > SmaxN_small")
           }
