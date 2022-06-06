@@ -319,7 +319,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
             
             #print("Starting recursive ")
             
-            value <- recursive.paths(T = T, 
+            value <- SmaxN::recursive.paths(T = T, 
                                      frame_possible_df, 
                                      n = ncol(frame_possible_df), 
                                      path_df = path_df, 
