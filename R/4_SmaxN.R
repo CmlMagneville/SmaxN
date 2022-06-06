@@ -349,7 +349,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
               
               # order the rows by decreasing order so that study intervals with the ...
               # ... biggest SmaxN first:
-              order_big_SmaxN_df <- dplyr::arrange(clean_possible_SmaxN_df, dplyr::desc(SmaxN))
+              order_SmaxN_df <- dplyr::arrange(clean_possible_SmaxN_df, dplyr::desc(SmaxN))
             }
             
             b <- b + 1
