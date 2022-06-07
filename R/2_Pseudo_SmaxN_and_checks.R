@@ -77,7 +77,7 @@ pseudoSmaxN.timestep <- function(time_df, abund_df, timestep, value) {
     
     
     # span over the different cameras:
-    for (j in (2:ncol(abund_df2))) {
+    for (j in (3:ncol(abund_df2))) {
       
       # get all the abundance values in the studied interval for the given cam:
       UI_abund_cam <- abund_df2[c(row_nb:(row_nb + value - 1)), j]
@@ -88,6 +88,7 @@ pseudoSmaxN.timestep <- function(time_df, abund_df, timestep, value) {
     } # end loop on cameras
     
     SmaxN <- sum(max_cam_vect)
+    SmaxN <- SmaxN + abund_df2[row_nb, 2]
     
   }
   
