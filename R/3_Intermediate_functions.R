@@ -508,8 +508,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           if (n %in% c(2, 3, 4, 5)) {
             print(paste0("n =", sep = " ", n))
             print(paste0("timestep (n - 1) is", sep = " ", path_df$timestep[n-1]))
-            print(paste("SmaxN_small = ", SmaxN_small_UI))
-            print("S <= SmaxN_small")
+            #print(paste("SmaxN_small = ", SmaxN_small_UI))
+            #print("S <= SmaxN_small")
           }
           
           # this cell on (n-1) cam become already tested in frame_of_possible df:
@@ -535,8 +535,8 @@ recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, ti
           if (n %in% c(2, 3, 4, 5)) {
             print(paste0("n =", sep = " ", n))
             print(paste0("timestep (n - 1) is", sep = " ", path_df$timestep[n-1]))
-            print(paste("SmaxN_small = ", SmaxN_small_UI))
-            print("S > SmaxN_small")
+            # print(paste("SmaxN_small = ", SmaxN_small_UI))
+            # print("S > SmaxN_small")
           }
         
           # get coord of the first cell in the frame of possible:
