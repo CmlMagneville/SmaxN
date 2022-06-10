@@ -83,13 +83,14 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
   }
   
   # put rownames of the abundance_df as number:
-  rownames(abund_df) <- c(1:nrow(abund_df)) 
-  
+  abund_df <- as.data.frame(abund_df)
+  rownames(abund_df) <- c(1:nrow(abund_df))
+
   
   #### Begin the SmaxN search
   
   ### Checks if no easy solution (SmaxN_small_UI):
-  
+
   # if there is more than  one camera:
   if (ncol(dist_df) != 1) {
     
