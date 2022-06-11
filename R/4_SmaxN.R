@@ -178,7 +178,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
                 print("SmaxN small UI = SmaxN possible UI")
                 return(list("maxN" = max(abund_df), 
                             "SmaxN" = small_SmaxN_df$SmaxN[which(small_SmaxN_df$row == k)],
-                            "SmaxN_timestep" = as.numeric(k)))
+                            "SmaxN_timestep" = apply(abund_df, 1, max)))
               }
             }
           }
