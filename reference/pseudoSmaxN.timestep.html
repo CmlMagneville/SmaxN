@@ -58,22 +58,31 @@ another camera.There are as many rows as there are cameras and there are
 as many columns as there are cameras, thus the dataframe is symmetrical
 and the diagonal is filled with 0. This dataframe is the output of the 
 <code>compute.cam.time</code> function</p></dd>
+
+
 <dt>abund_df</dt>
 <dd><p>a numerical dataframe containing the abundance of a 
 given species across continuous time for several cameras. The columns refer
 to the cameras and the rows refers to the time. <strong>Time must be given
 in seconds and be continuous</strong>. <strong>BE CAREFUL that the cameras are 
 in the same order in the abund_df and the time_df!</strong>.</p></dd>
+
+
 <dt>timestep</dt>
 <dd><p>the number of the row to the studied timestep</p></dd>
+
+
 <dt>value</dt>
 <dd><p>the value of the span of the interval on which the SmaxN is 
 computed. Note: if the span is of 2 seconds, then the interval gathers 
 3 cases of the `abund_df`.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>the function returns the SmaxN value for the given timestep and span</p>
+    
+
+<p>the function returns the SmaxN value for the given timestep and span</p>
     </div>
 
     <div id="ref-examples">
@@ -101,7 +110,7 @@ computed. Note: if the span is of 2 seconds, then the interval gathers
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

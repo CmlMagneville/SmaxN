@@ -58,11 +58,15 @@ dataframe, use the other until it works.</p>
 the path and their coordinates ie. on which column (camera name) and row 
 (time) they are. Values are ranged fom the biggest (first rows) to the 
 lowest (last rows). Column names: value, cam_nm, timestep</p></dd>
+
+
 <dt>next_possible</dt>
 <dd><p>a dataframe with column names: value, cam_nm, timestep 
 with a row for the information about the next possible value. If several cells 
 have the same value (ex-aequo), the dataframe has one row for each cell. This
 dataframe is obtained through the <code>search.next.value</code> function.</p></dd>
+
+
 <dt>time_df</dt>
 <dd><p>a numerical dataframe containing the minimal time 
 needed for an individual of the studied species to go from a camera to 
@@ -70,10 +74,13 @@ another camera.There are as many rows as there are cameras and there are
 as many columns as there are cameras, thus the dataframe is symmetrical
 and the diagonal is filled with 0. This dataframe is the output of the 
 <code>compute.cam.time</code> function.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>the next value to be chosen that is to say the biggest value of the
+    
+
+<p>the next value to be chosen that is to say the biggest value of the
 bloc after the last value in max_bloc which is possible according to the 
 distance between cameras. Note: For one possible value, check if possible
 with already on the path values and stop when one is not possible. This
@@ -93,7 +100,7 @@ showing TRUE or FALSE for all ex-aequo given the values already on the path.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
