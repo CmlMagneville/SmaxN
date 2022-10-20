@@ -32,8 +32,6 @@ tutorial”]()) on the [SmaxN
 website](https://cmlmagneville.github.io/SmaxN/).
 
 ``` r
-library(SmaxN)
-
 # Build distance dataframe for the example:
 dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
                          "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
