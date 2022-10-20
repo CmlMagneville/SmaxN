@@ -8,10 +8,8 @@ Authors@R:
            role    = c("aut", "cre"),
            email   = "camille.magneville@gmail.com",
            comment = c(ORCID = "0000-0003-0489-3822"))
-Description: The purpose of the `SmaxN` package is to compute an extension
-  of the maxN index (maximum of abundance seen during a given period of time)
-  by using temporally synchronised cameras. It can use the distance between
-  cameras and the maximal speed of the studied species to improve the estimate.
+Description: The purpose of the `SmaxN` package is to compute an estimation of
+  a species abundance given a network of synchronised cameras.
 License: GPL-2
 RoxygenNote: 7.1.2
 Imports: 
