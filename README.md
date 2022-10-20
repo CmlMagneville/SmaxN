@@ -24,7 +24,11 @@ remotes::install_github("CmlMagneville/SmaxN", build_vignettes = TRUE)
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+In this example, we see how to use the `SmaxN.computation` function of
+the `SmaxN` package which computes the SmaxN metric and the maxN metrics
+among other index (for a better explanation, don’t hesitate to look at
+the [“How to compute the SmaxN and other abundance metrics?
+tutorial”]()) on the [SmaxN website]().
 
 ``` r
 library(SmaxN)
@@ -41,22 +45,40 @@ abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3, 0, 6, 2, 0, 1),
                           "D" = c(0, 1, 0, 1, 0, 6, 1, 1, 6, 4, 2, 1))
  
 # Run the general function of the package :
-SmaxN::compute.max.abund(dist_df = dist_df_ex, 
-                 fish_speed = 1.6, 
-                 abund_df   = abund_df_ex)
+SmaxN_results <- SmaxN::SmaxN.computation(abund_df = abund_df_ex, 
+                                          speed = 1.6, 
+                                          dist_df = dist_df_ex)
+#> [1] "!!!!!! Starting row  1 on 2"
+#> [1] "50%"
+SmaxN_results
+#> $maxN
+#> [1] 7
+#> 
 #> $SmaxN
 #> [1] 19
 #> 
-#> $maxN
-#> [1] 7
+#> $path_saved
+#> $path_saved[[1]]
+#> $path_saved[[1]][[1]]
+#>   value cam_nm timestep
+#> 1     7      A        4
+#> 2     2      B        4
+#> 3     4      C        6
+#> 4     6      D        6
+#> 
+#> 
+#> 
+#> $number_SmaxN_path
+#> [1] 1
+#> 
+#> $SmaxN_timestep
+#> [1] 16
 #> 
 #> $maxN_cam
 #> A B C D 
 #> 7 2 4 6 
 #> 
-#> $maxN_row
-#>  [1] 2 2 3 7 2 6 3 2 6 4 2 4
-#> 
-#> $SmaxN_row
-#> [1] 16
+#> $maxN_timestep
+#>  1  2  3  4  5  6  7  8  9 10 11 12 
+#>  2  2  3  7  2  6  3  2  6  4  2  4
 ```
