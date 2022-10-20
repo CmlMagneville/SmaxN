@@ -1,5 +1,5 @@
 ---
-title: "How_to_compute_SmaxN"
+title: "How to compute the SmaxN metric?"
 author: "Camille Magneville"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -101,6 +101,10 @@ abund_df_ex
 
 For instance, no individual is seen on the camera A on the first timestep, one individual is seen on the camera A on the second timestep, three individuals are 
 seen on the camera A on the third time step *etc.*
+
+<br> 
+
+Then, let's apply the 
 
 
 <br />
