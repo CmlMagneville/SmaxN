@@ -104,10 +104,73 @@ seen on the camera A on the third time step *etc.*
 
 <br> 
 
-We can now apply the `SmaxN.computation` function
+We can now apply the `SmaxN.computation` function to compute the `SmaxN` metric
+among other metrics:
+
+```{r}
+SmaxN_results <- SmaxN::SmaxN.computation(abund_df = abund_df_ex, 
+                                          speed = 1.6, 
+                                          dist_df = dist_df_ex)
+```
+
+<br>
+
+Let's now have a look at the results:
+
+* the `maxN` value which is the highest abundance seen amon all cameras and 
+time steps:
+
+```{r}
+SmaxN_results$maxN
+```
+
+* the `SmaxN` value: we can see here that by using the `SmaxN` metric, the 
+abundance estmation is more than doubled than when using the `maxN` metric
+
+```{r}
+SmaxN_results$SmaxN
+```
+
+* the values of abundances along cameras and time steps which have led to the
+`SmaxN` metric:
+
+```{r}
+SmaxN_results$path_saved
+```
+
+* the number of combinaisons of time steps and cameras which have led to the 
+`SmaxN` value:
+
+```{r}
+SmaxN_results$number_SmaxN_path
+```
+
+* the `SmaxN_timestep` which is the maximal value of the sum of abundances 
+across all cameras for each time step: Here this metrix equals 16 which is obtained through the ninth time step (6 + 1 + 3 + 6):
+
+```{r}
+SmaxN_results$SmaxN_timestep
+```
+
+* the maximal values obtained for each camera across all time steps:
+
+```{r}
+SmaxN_results$maxN_cam
+```
+
+* the maximal values obtained for each time step across all cameras:
+
+```{r}
+SmaxN_results$maxN_timestep
+```
 
 
 <br />
+
+(For further explanations, a paper will (hopefully) be available in the next months.
+
+
+<br>
 
 # References
 
