@@ -104,7 +104,7 @@ seen on the camera A on the third time step *etc.*
 
 <br> 
 
-Then, let's apply the 
+We can now apply the `SmaxN.computation` function
 
 
 <br />
