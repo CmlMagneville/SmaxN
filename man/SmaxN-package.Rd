@@ -8,6 +8,13 @@
 \description{
 The purpose of the `SmaxN` package is to compute an extension of the maxN index (maximum of abundance seen during a given period of time) by using temporally synchronised cameras. It can use the distance between cameras and the swimming speed of the studied species to improve the estimate.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://cmlmagneville.github.io/SmaxN/}
+}
+
+}
 \author{
 \strong{Maintainer}: Camille Magneville \email{camille.magneville@gmail.com} (\href{https://orcid.org/0000-0003-0489-3822}{ORCID})
 

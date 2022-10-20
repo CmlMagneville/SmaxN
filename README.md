@@ -28,7 +28,8 @@ In this example, we see how to use the `SmaxN.computation` function of
 the `SmaxN` package which computes the SmaxN metric and the maxN metrics
 among other index (for a better explanation, don’t hesitate to look at
 the [“How to compute the SmaxN and other abundance metrics?
-tutorial”]()) on the [SmaxN website]().
+tutorial”]()) on the [SmaxN
+website](https://cmlmagneville.github.io/SmaxN/).
 
 ``` r
 library(SmaxN)
