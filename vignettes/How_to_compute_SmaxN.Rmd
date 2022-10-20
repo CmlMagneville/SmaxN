@@ -18,5 +18,114 @@ and how to simply compute it using the `SmaxN` package.
 # What is the SmaxN metric about? 
 
 
+The SmaxN is a metric which uses a network of synchronised cameras to estimate a 
+species abundance using the distances between the cameras and species maximal speed.
+It relies on the principle that <span style="color: lightseagreen;">a mobile 
+individual can not be in two places at the same time</span>.
 
-<span style="color: lightseagreen;">A mobile individual can not be in two places at the same time</span>
+<br>
+
+The SmaxN framework needs only few conditions:
+
+* <span style="color: lightseagreen;">a network of temporally synchronised cameras</span>: Surveys should be based on a set of at least two fixed cameras
+which **field of view do not overlap**. The temporal synchronisation should be 
+realised at a coherent precision according to the study design (at which 
+precision individuals are counted and what distance separate the cameras). 
+Basically, you just need to be able to link the frames from one camera to the 
+frames of the other cameras. The distances between each pair of cameras must
+be known and you must build a **distance dataframe** with cameras in rows and 
+columns.
+
+* <span style="color: lightseagreen;">abundance through time</span>: abundance 
+of the studied species should be retrieved through time. Thus for the studied 
+species, there is a matrix with recorded abundance for each timestep (in rows) 
+on each camera (in columns) called the **camera × time abundance daaframe**.
+
+* <span style="color: lightseagreen;">species maximal speed</span>: the species 
+maximal speed should be retrieved through experiments or using data available.
+Yet to our knowledge, speed data is only available for a small number of species
+[Husak et al. 2006](https://onlinelibrary.wiley.com/doi/abs/10.1111/j.0014-3820.2006.tb01849.x) (collared lizard Crotaphytus collaris), [Alexander et al. 1977](https://zslpublications.onlinelibrary.wiley.com/doi/10.1111/j.1469-7998.1977.tb04188.x) (ten species of african ungulates), [Layne and Benton 1954](https://academic.oup.com/jmammal/article-abstract/35/1/103/847724?redirectedFrom=fulltext) (fourteen species of small mammals), [Hirt et al. 2017](https://pubmed.ncbi.nlm.nih.gov/29046579/) (474 terrestrial species), [Fulton 2007](https://link.springer.com/article/10.1007/s00338-007-0195-0) (117 coral reef fish species belonging to 10 families). If data is missing, we recommend to 
+use **conservative estimates** that is the maximum of maximal speed among 
+species from the same clade (e.g. family or order)
+
+<br>
+
+**NB**: The species maximal speed and the distances between the cameras must be
+given using the same metric units (*i.e.* if using meters for the distance,
+then use meters per seconds (for instance) for the speed)
+
+<br>
+
+Using the minimal time it takes for an individual of the studied species to go 
+from one camera to another camera (using species maximal speed and distance 
+between the cameras), the `SmaxN` algorithm find the best combination of 
+abundances seen across time and cameras to get the highest possible estimate
+of abundance.
+
+<br>
+
+
+# Let's compute the SmaxN & other abundance estimates
+
+
+<br>
+
+We will here stay with the siple example showed in the `READ.me` document with a 
+better explanation of each output.
+
+First, let's build the distance data frame and the abundance data:
+
+
+```{r}
+# Build distance dataframe for the example:
+dist_df_ex <- data.frame("A" = c(0, 2, 5, 5), "B" = c(2, 0, 5, 5), 
+                         "C" = c(5, 5, 0, 4), "D" = c(5, 5, 4, 0))
+rownames(dist_df_ex) <- c("A", "B", "C", "D")
+
+# Build distance dataframe for the example:
+abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3, 0, 6, 2, 0, 1), 
+                          "B" = c(2, 2, 2, 2, 0, 0, 0, 0, 1, 2, 1, 0), 
+                          "C" = c(2, 0, 1, 0, 0, 4, 2, 2, 3, 0, 0, 4), 
+                          "D" = c(0, 1, 0, 1, 0, 6, 1, 1, 6, 4, 2, 1))
+dist_df_ex
+```
+
+In the distance dataframe there are for instance 2m from camera A to 
+camera B, 5m from camera A to camera C and D *etc.*
+
+<br>
+
+```{r}
+abund_df_ex
+```
+
+For instance, no individual is seen on the camera A on the first timestep, one individual is seen on the camera A on the second timestep, three individuals are 
+seen on the camera A on the third time step *etc.*
+
+
+<br />
+
+# References
+
+<br />
+
+- Alexander _et al._ (1977) 
+Fast locomotion of some African ungulates
+_Journal of Zoology_, **183**, 291-300.
+
+- Fulton (2007) 
+Swimming speed performance in coral reef fishes: field validations reveal 
+distinct functional groups
+_Coral Reefs_, **26**, 217-228.
+
+- Hirt _et al._ (2017) 
+A general scaling law reveals why the largest animals are not the fastest 
+_Nat. Ecol. Evol._ **1**, 1116–1122.
+
+- Husak _et al._ (2006) 
+Faster lizards sire more offspring: sexual selection on whole-animal performance 
+_Evolution_ **60**, 2122–2130.
+
+- Layne & Benton (1954) 
+Some Speeds of Small Mammals
+_Journal of Mammology_ **1**, 103–104.
