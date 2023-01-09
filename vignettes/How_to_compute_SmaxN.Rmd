@@ -104,10 +104,11 @@ seen on the camera A on the third time step *etc.*
 
 <br> 
 
-We can now apply the `SmaxN.computation` function to compute the `SmaxN` metric
+We can now call the package and apply the `SmaxN.computation` function to compute the `SmaxN` metric
 among other metrics:
 
 ```{r}
+library(SmaxN)
 SmaxN_results <- SmaxN::SmaxN.computation(abund_df = abund_df_ex, 
                                           speed = 1.6, 
                                           dist_df = dist_df_ex)
