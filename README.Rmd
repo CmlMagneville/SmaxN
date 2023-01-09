@@ -33,7 +33,6 @@ if (!requireNamespace("remotes", quietly = TRUE)) {
 
 ## Install < SmaxN > package from GitHub ----
 remotes::install_github("CmlMagneville/SmaxN", build_vignettes = TRUE)
-
 ```
 
 
@@ -54,6 +53,8 @@ abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3, 0, 6, 2, 0, 1),
                           "B" = c(2, 2, 2, 2, 0, 0, 0, 0, 1, 2, 1, 0), 
                           "C" = c(2, 0, 1, 0, 0, 4, 2, 2, 3, 0, 0, 4), 
                           "D" = c(0, 1, 0, 1, 0, 6, 1, 1, 6, 4, 2, 1))
+# Call the package:
+library("SmaxN")
  
 # Run the general function of the package :
 SmaxN_results <- SmaxN::SmaxN.computation(abund_df = abund_df_ex, 
@@ -61,3 +62,13 @@ SmaxN_results <- SmaxN::SmaxN.computation(abund_df = abund_df_ex,
                                           dist_df = dist_df_ex)
 SmaxN_results
 ```
+
+
+## Citation
+
+Please cite this package as:
+
+_Magneville et al._ (2022). 
+SmaxN: Maximisation of abundances using synchronised cameras in R. 
+R package version 0.2. https://github.com/CmlMagneville/SmaxN
+
