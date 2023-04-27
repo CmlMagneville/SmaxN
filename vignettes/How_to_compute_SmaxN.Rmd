@@ -4,7 +4,7 @@ author: "Camille Magneville"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{How to compute th SmaxN metric?}
+  %\VignetteIndexEntry{How to compute the SmaxN metric?}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
