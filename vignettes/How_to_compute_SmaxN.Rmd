@@ -107,8 +107,14 @@ seen on the camera A on the third time step *etc.*
 We can now call the package and apply the `SmaxN.computation` function to compute the `SmaxN` metric
 among other metrics:
 
+```{r, include = FALSE}
+devtools::load_all(".")
+```
+
+```
+
 ```{r}
-library(SmaxN)
+
 SmaxN_results <- SmaxN::SmaxN.computation(abund_df = abund_df_ex, 
                                           speed = 1.6, 
                                           dist_df = dist_df_ex)
@@ -168,7 +174,8 @@ SmaxN_results$maxN_timestep
 
 <br />
 
-(For further explanations, a paper will (hopefully) be available in the next months.
+For further explanations, a paper see the paper associated with this 
+framework: https://aslopubs.onlinelibrary.wiley.com/doi/full/10.1002/lom3.10606
 
 
 <br>

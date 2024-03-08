@@ -23,4 +23,4 @@ Suggests:
     knitr,
     rmarkdown (>= 2.6)
 URL: https://cmlmagneville.github.io/SmaxN/
-VignetteBuilder: knitr
+VignetteBuilder: knitr, rmarkdown
