@@ -3,7 +3,7 @@ pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   How_to_compute_SmaxN: How_to_compute_SmaxN.html
-last_built: 2024-04-09T11:31Z
+last_built: 2024-04-09T12:08Z
 urls:
   reference: https://cmlmagneville.github.io/SmaxN/reference
   article: https://cmlmagneville.github.io/SmaxN/articles
