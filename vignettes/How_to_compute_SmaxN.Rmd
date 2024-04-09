@@ -13,14 +13,15 @@ vignette: >
 The goal of this vignette is to quickly explain the goals of the `SmaxN` metric 
 and how to simply compute it using the `SmaxN` package.
 
+<br>
 
 
 # What is the SmaxN metric about? 
 
 
-The SmaxN is a metric which uses a network of synchronised cameras to estimate a 
+The SmaxN is a metric which uses a network of synchronised cameras to estimate  
 species abundance using the distances between the cameras and species maximal speed.
-It relies on the principle that <span style="color: lightseagreen;">a mobile 
+It relies on the simple principle that <span style="color: lightseagreen;">a mobile 
 individual can not be in two places at the same time</span>.
 
 <br>
@@ -33,13 +34,13 @@ realised at a coherent precision according to the study design (at which
 precision individuals are counted and what distance separate the cameras). 
 Basically, you just need to be able to link the frames from one camera to the 
 frames of the other cameras. The distances between each pair of cameras must
-be known and you must build a **distance dataframe** with cameras in rows and 
+be known and you must build a **distance data frame** with cameras in rows and 
 columns.
 
 * <span style="color: lightseagreen;">abundance through time</span>: abundance 
 of the studied species should be retrieved through time. Thus for the studied 
-species, there is a matrix with recorded abundance for each timestep (in rows) 
-on each camera (in columns) called the **camera × time abundance daaframe**.
+species, there is a matrix with recorded abundance for each time step (in rows) 
+on each camera (in columns) called the **camera × time abundance data frame**.
 
 * <span style="color: lightseagreen;">species maximal speed</span>: the species 
 maximal speed should be retrieved through experiments or using data available.

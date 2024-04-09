@@ -76,12 +76,14 @@ Magneville</h4>
 <p>The goal of this vignette is to quickly explain the goals of the
 <code>SmaxN</code> metric and how to simply compute it using the
 <code>SmaxN</code> package.</p>
+<p><br></p>
 <div class="section level2">
 <h2 id="what-is-the-smaxn-metric-about">What is the SmaxN metric about?<a class="anchor" aria-label="anchor" href="#what-is-the-smaxn-metric-about"></a>
 </h2>
 <p>The SmaxN is a metric which uses a network of synchronised cameras to
-estimate a species abundance using the distances between the cameras and
-species maximal speed. It relies on the principle that <span style="color: lightseagreen;">a mobile individual can not be in two
+estimate<br>
+species abundance using the distances between the cameras and species
+maximal speed. It relies on the simple principle that <span style="color: lightseagreen;">a mobile individual can not be in two
 places at the same time</span>.</p>
 <p><br></p>
 <p>The SmaxN framework needs only few conditions:</p>
@@ -94,14 +96,14 @@ coherent precision according to the study design (at which precision
 individuals are counted and what distance separate the cameras).
 Basically, you just need to be able to link the frames from one camera
 to the frames of the other cameras. The distances between each pair of
-cameras must be known and you must build a <strong>distance
-dataframe</strong> with cameras in rows and columns.</p></li>
+cameras must be known and you must build a <strong>distance data
+frame</strong> with cameras in rows and columns.</p></li>
 <li><p><span style="color: lightseagreen;">abundance through
 time</span>: abundance of the studied species should be retrieved
 through time. Thus for the studied species, there is a matrix with
-recorded abundance for each timestep (in rows) on each camera (in
-columns) called the <strong>camera × time abundance
-daaframe</strong>.</p></li>
+recorded abundance for each time step (in rows) on each camera (in
+columns) called the <strong>camera × time abundance data
+frame</strong>.</p></li>
 <li><p><span style="color: lightseagreen;">species maximal speed</span>:
 the species maximal speed should be retrieved through experiments or
 using data available. Yet to our knowledge, speed data is only available
