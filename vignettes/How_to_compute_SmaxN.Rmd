@@ -169,7 +169,7 @@ SmaxN_results$maxN_timestep
 
 <br />
 
-For further explanations, a paper see the paper associated with this 
+For further explanations, see the paper associated with this 
 framework: https://aslopubs.onlinelibrary.wiley.com/doi/full/10.1002/lom3.10606
 
 
