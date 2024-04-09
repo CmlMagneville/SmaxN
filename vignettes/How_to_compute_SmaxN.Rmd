@@ -70,8 +70,7 @@ of abundance.
 
 <br>
 
-We will here stay with the siple example showed in the `READ.me` document with a 
-better explanation of each output.
+We will here work with a simple example.
 
 First, let's build the distance data frame and the abundance data:
 
@@ -107,11 +106,6 @@ seen on the camera A on the third time step *etc.*
 We can now call the package and apply the `SmaxN.computation` function to compute the `SmaxN` metric
 among other metrics:
 
-```{r, include = FALSE}
-devtools::load_all(".")
-```
-
-```
 
 ```{r}
 

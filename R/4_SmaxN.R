@@ -99,13 +99,13 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
       
       
       # get the time_df using the 1st function:
-      time_df <- SmaxN::compute.cam.time(dist_df = dist_df, fish_speed = fish_speed)
+      time_df <- compute.cam.time(dist_df = dist_df, fish_speed = fish_speed)
       
       
       #### order the abundance df so cameras ok:
       
       # compute the order in whch cameras should be viewed:
-      cam_order <- SmaxN::cam.order(time_df)
+      cam_order <- cam.order(time_df)
       
       # order the abundance columns:
       abund_df2 <- abund_df
@@ -132,13 +132,13 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
       for (i in (1:nrow(abund_df))) {
         
         # compute the SmaxN for the timestep and the small span:
-        small <- SmaxN::pseudoSmaxN.timestep(time_df = time_df,
+        small <- pseudoSmaxN.timestep(time_df = time_df,
                                              abund_df = abund_df,
                                              timestep = i,
                                              value = small_UI)
         
         # compute the SmaxN for the timestep and the big span:
-        frame_possible_df <- SmaxN::frame.possible(i, time_df, abund_df) 
+        frame_possible_df <- frame.possible(i, time_df, abund_df) 
         possible <- sum(apply(frame_possible_df, 2, max, na.rm = TRUE))
         
         # add values in the small and big df:
@@ -322,7 +322,7 @@ SmaxN.computation <- function(abund_df, speed, dist_df) {
             
             #print("Starting recursive ")
             
-            value <- SmaxN::recursive.paths(T = T, 
+            value <- recursive.paths(T = T, 
                                      frame_possible_df, 
                                      n = ncol(frame_possible_df), 
                                      path_df = path_df, 

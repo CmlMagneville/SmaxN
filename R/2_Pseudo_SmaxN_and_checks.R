@@ -1,12 +1,8 @@
 ################################################################################
 ##
-## 4_Pseudo_SmaxN_and_checks.R
+## 2_Pseudo_SmaxN_and_checks.R
 ##
-## This script gathers ... functions used in the global SmaxN function 
-## (script 5): 
-## - 
-## - 
-## - 
+## This script gathers functions used in the global SmaxN function: 
 ##
 ## 12/05/2022
 ##
@@ -41,17 +37,7 @@
 #' 
 #' @return the function returns the SmaxN value for the given timestep and span
 #'
-#' @export
-#' 
-#' @examples
-#'  # Build distance dataframe for the example:
-#'  abund_df_ex <- data.frame("A" = c(0, 1, 3, 7, 2, 2, 3), 
-#'                            "B" = c(2, 2, 2, 2, 0, 0, 0), 
-#'                            "C" = c(2, 0, 1, 0, 0, 4, 2), 
-#'                            "D" = c(0, 1, 0, 1, 0, 6, 1))
-#'  
-#'  # Run the function:
-#'  
+#' @noRd
 #' 
 
 
@@ -158,7 +144,7 @@ pseudoSmaxN.timestep <- function(time_df, abund_df, timestep, value) {
 #' function tests for all possible values (all ex-aequo) so we have a df 
 #' showing TRUE or FALSE for all ex-aequo given the values already on the path.
 #' 
-#' @export
+#' @noRd
 #' 
 
 next.possible <- function(max_bloc, next_possible, time_df) {
@@ -265,19 +251,8 @@ next.possible <- function(max_bloc, next_possible, time_df) {
 #' 
 #' @return the completed \code{first_cell_df}
 #'
-#' @examples 
-#' 
-#'  abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), 
-#'  "B" = c(0,4,2,2,1,3,3), 
-#'  "C" = c(0,0,0,0,1,1,1), 
-#'  "D" = c(1,0,0,0,3,3,3))
+#' @noRd
 #'  
-#'  time_df <- data.frame("A" = c(0,5,6,6), "B" = c(5,0,3,3), 
-#'  "C" = c(6,3, 0, 3), "D" = c(6,3,3,0))
-#'  rownames(time_df) <- c("A", "B", "C", "D")
-#'
-#' @export 
-#'
 
 
 first.cam.possible <- function(time_df, first_cell_df,

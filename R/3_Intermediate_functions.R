@@ -35,15 +35,9 @@
 #' 
 #' @return a dataframe with one row containing the camera order to follow
 #' 
-#' @export
+#' @noRd
 #' 
-#' @examples 
-#' time_df <- data.frame("A" = c(0,1,3,3), "B" = c(1,0,2,2), 
-#'                       "C" = c(3,3,0,2), "D" = c(3,2,2,0))
-#' rownames(time_df) <- c("A", "B", "C", "D")
-#' 
-#' order_cam <- cam.order(time_df)
-#' 
+
 
 
 cam.order <- function(time_df) {
@@ -190,21 +184,7 @@ cam.order <- function(time_df) {
 #' @return the abundance dataframe with NA on all cells except in the frame of 
 #' possible around the studied timestep T.
 #' 
-#' @export
-#' 
-#' @examples 
-#' 
-#' abund_df <- data.frame("A" = c(9,8,3,3,3,3,3), "B" = c(0,4,2,2,1,3,3), 
-#' "C" = c(0,0,0,0,1,1,1), "D" = c(1,0,0,0,3,3,3))
-#' 
-#' time_df <- data.frame("A" = c(0,4,4,3), "B" = c(4,0,2,2), 
-#'                       "C" = c(4,2,0,2), "D" = c(3,2,2,0))
-#' rownames(time_df) <- c("A", "B", "C", "D")
-#' 
-#' cam_order <- cam.order(time_df)
-#' 
-#' abund_df <- abund_df[, as.vector(unlist(cam_order))]
-#' 
+#' @noRd
 #' 
 
 
@@ -361,23 +341,9 @@ frame.possible <- function(T, time_df, abund_df) {
 #' 
 #' @return the highest SmaxN value found on all the possble path given the 
 #' studied timestep and the frame of possible.
-#' 
-#' @export
-#' 
-#' @examples 
-#' 
-#' abund_df <- data.frame("A" = c(3,8,3,3,3,3,3), "B" = c(0,4,2,2,1,8,3), 
-#' "C" = c(0,0,0,9,1,1,1), "D" = c(1,0,0,0,3,3,3))
-#' 
-#' time_df <- data.frame("A" = c(0,4,4,3), "B" = c(4,0,2,2), 
-#'                       "C" = c(4,2,0,2), "D" = c(3,2,2,0))
-#' rownames(time_df) <- c("A", "B", "C", "D")
-#' 
-#' cam_order <- cam.order(time_df)
-#' 
-#' abund_df <- abund_df[, as.vector(unlist(cam_order))]
-#' 
-#' 
+#'
+#' @noRd
+#'  
 
 
 recursive.paths <- function(T, frame_possible_df, n, path_df, SmaxN_small_UI, time_df) {
